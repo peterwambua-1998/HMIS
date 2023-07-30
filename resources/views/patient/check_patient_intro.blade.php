@@ -28,13 +28,10 @@ $(document).ready(function () {
                 <h3 class="box-title">{{__('Check Patient')}}</h3>
             </div>
             <div class="box-body">
-                
-                    
                     <h3>{{__('Enter Patient Name To Begin')}}</h3>
                     <input id="appNum" name="keyword" class="form-control input-lg" type="string" placeholder="Patient Name" value="{{$key_word}}">
                     <input id="btn_submit" type="button" class="btn btn-success btn-lg mt-3 text-center"
                         value={{__("Check Patient")}}>
-                
             </div>
         </div>
         @if (session()->has('fail'))
@@ -84,7 +81,7 @@ $(document).ready(function () {
                 success: function(response) {
                     console.log(response);
                     for (let i = 0; i < response.length; i++) {
-                        if (response[i].appointment.department == "consultation") {
+                        if (response[i].appointment) {
                             let template = `
                                 <div class="col-md-12">
                                     <div class="box box-success mt-5">

@@ -177,7 +177,7 @@ class TriageController extends Controller
         if ($appointment == null) {
             return redirect()->back()->withError('Patient is not in queue');    
         }
-        $triage = Triage::where('patient_id', '=', $result->id)->where('appointment_id','=', $appointment->id)->get();
+        $triage = Triage::where('patient_id', '=', $result->id)->get();
         $docname = User::where('id', '=', $appointment->doctor_id)->first();
         $docs = User::where('user_type', 'LIKE', '%' . 'doctor' . '%')->get();
 

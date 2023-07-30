@@ -6,6 +6,9 @@ use App\Account;
 use App\Appointment;
 use App\Billing;
 use App\Lab;
+use App\LabMeasure;
+use App\LabMeasureResult;
+use App\LabPatientMeasure;
 use App\Measure;
 use App\PatentAppointmentService;
 use App\Patients;
@@ -44,56 +47,47 @@ class LabController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request->activatedpartialthromboplastin);
         DB::transaction(function() use($request){
-            $lab = new Lab();
-            $lab->whitebooldcells = $request->whitebooldcells;
-            $lab->redbooldcells = $request->redbooldcells;
-            $lab->prothrombintime = $request->prothrombintime;
-            $lab->activatedpartialthromboplastin = $request->activatedpartialthromboplastin;
-            $lab->aspartateaminotransferase = $request->aspartateaminotransferase;
-            $lab->alanineaminotransferase = $request->alanineaminotransferase;
-            $lab->mlactatedehydrogenase = $request->mlactatedehydrogenase;
-            $lab->bloodureanitrogen = $request->bloodureanitrogen;
-            $lab->WBCcountWdifferential = $request->WBCcountWdifferential;
-            $lab->Quantitativeimmunoglobulin = $request->Quantitativeimmunoglobulin;
-            $lab->Erythrocytesedimentationrate = $request->Erythrocytesedimentationrate;
-            $lab->alpha_antitrypsin = $request->alpha_antitrypsin;
-            $lab->Reticcount = $request->Reticcount;
-            $lab->arterialbloodgasses = $request->arterialbloodgasses;
-            $lab->appointment_id = $request->appointment_id;
-            $lab->patient_id = $request->patient_id;
-            $lab->save();
+            $obj = new stdClass;
+            $lab = [];
 
-            $account = new Account();
-            $account->patient_id = $request->patient_id;
-            $account->appointment_id = $request->appointment_id;
-            $account->description = $request->billing_for;
-            $account->title = $request->billing_for;
-            $account->amount = $request->amount;
+            for ($i=0; $i < count($request->measure_id); $i++) { 
+                $measure_result = new LabMeasureResult();
+                $measure_result->appointment_id = $request->appointment_id;
+                $measure_result->patient_id = $request->patient_id;
+                $measure_result->measure_id = $request->measure_id[$i];
+                $measure_result->result = $request->measures[$i];
+                $measure_result->save();
 
+                $measure_name = LabMeasure::where('id','=',$request->measure_id[$i])->first()->measure_name;
+                array_push($lab, $measure_name);
+            }
 
             $appointment = Appointment::find($request->appointment_id);
             if ($appointment->admit == 'YES') {
                 $appointment->department = 'ward';
             } else {
-                $appointment->department = 'consultation';
+                $doc = User::where('id','=', $appointment->doctor_id)->first();
+                if ($doc->user_type == 'doctor_physiotherapy') {
+                    $appointment->department = 'physiotherapy';
+                }
+
+                if ($doc->user_type == 'doctor_consultation') {
+                    $appointment->department = 'consultation';
+                }
+
+                if ($doc->user_type == 'doctor_dentist') {
+                    $appointment->department = 'dentist';
+                }
             }
             $appointment->update();
-
-            
-            $measure = Measure::where('appointment_id', '=', $request->appointment_id)->where('patient_id','=',$request->patient_id)->get()->last();
-
-            $obj = new stdClass;
-            $obj->service = 'lab';
-
+            $obj->lab = $lab;
 
             $service = new PatentAppointmentService();
             $service->patient_id = $request->patient_id;
             $service->appointment_id = $request->appointment_id;
             $service->service = json_encode($obj);
             $service->save();
-
 
         });
         
@@ -156,7 +150,6 @@ class LabController extends Controller
                 $appointment =  Appointment::where('patient_id', $patient->id)->get()->last();
                 $patient->appointment = $appointment;
             }
-          
         }
         if ($request->cat == "nic") {
             $result = Patients::withTrashed()->where('nic', 'LIKE', '%' . $request->keyword . '%')->get();
@@ -204,20 +197,82 @@ class LabController extends Controller
         $result = Patients::find($request->patient_id);
         $triage = Lab::where('patient_id', '=', $result->id)->get();
         $appointment = Appointment::where('patient_id', '=', $result->id)->get()->last();
-        $measure = Measure::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result->id)->get()->last();
+        $measures = LabPatientMeasure::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result->id)->get();
         $docname = User::where('id', '=', $appointment->doctor_id)->first();
 
-        if (!$measure) {
+        if ($measures->isEmpty()) {
             return redirect()->back()->with('unsuccess','Patient has not been sent to lab');
+        }
+
+        $note = null;
+
+        $lab_history = Appointment::where('patient_id','=', $request->patient_id)->where('id','!=', $appointment->id)->get();
+        foreach ($lab_history as $key => $history) {
+            $lab_measure_results = LabMeasureResult::where('appointment_id','=', $history->id)->get();
+            if ($lab_measure_results->isNotEmpty()) {
+                $history->lab_measure_results = $lab_measure_results;
+            } else {
+                $history->lab_measure_results = null;
+            }
+        }
+        
+
+        foreach ($measures as $key => $measure) {
+            if ($measure->measure_id) {
+                $measure_name = LabMeasure::where('id','=',$measure->measure_id)->first();
+                $measure->measure_name = $measure_name->measure_name;
+                $measure->unit = $measure_name->unit_of_measurement;
+            }
+
+            if ($measure->measure_id == 0 && $measure->note) {
+                $note = $measure->note;
+            }
         }
 
         return view('lab.labview')->with([
             "title" => "Search Results", 
             "search_result" => $result, 
             'appointment' => $appointment, 
-            'measure' => $measure, 
-            'docs' => $docname
+            'measures' => $measures, 
+            'docs' => $docname,
+            'note' => $note,
+            'lab_history' => $lab_history
         ]);
         
+    }
+
+    public function measureList()
+    {
+        $lab_measures = LabMeasure::all();
+        return view('lab.measure_list', compact('lab_measures'));
+    }
+
+    public function saveMeasure(Request $request)
+    {
+        $lab_measure = new LabMeasure();
+        $lab_measure->measure_name = $request->measure;
+        $lab_measure->unit_of_measurement = $request->unit_of_measurement;
+        if ($lab_measure->save()) {
+            return redirect()->route('labMeasure')->with('success','Record stored successfully');
+        }
+        return redirect()->route('labMeasure')->with('unsuccess','System error please try again');
+    }
+
+    public function editMeasure($id)
+    {
+        $title = 'Edit Lab Measure';
+        $lab_measure = LabMeasure::find($id);
+        return view('lab.measure_edit', compact('lab_measure', 'title'));
+    }
+
+    public function updateMeasure(Request $request)
+    {
+        $lab_measure = LabMeasure::find($request->lab_measure_id);
+        $lab_measure->measure_name = $request->measure;
+        $lab_measure->unit_of_measurement = $request->unit;
+        if ($lab_measure->update()) {
+            return redirect()->route('labMeasure')->with('success','Record stored successfully');
+        }
+        return redirect()->route('labMeasure')->with('unsuccess','System error please try again');
     }
 }

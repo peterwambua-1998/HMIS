@@ -7,6 +7,7 @@ use App\Patients;
 use App\Prescription;
 use App\Appointment;
 use App\Billing;
+use App\PatentAppointmentService;
 //use Illuminate\Support\Facades\Storage;
 use App\Prescription_Medicine;
 //use App\Appointment;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 //use stdClass;
 //use Carbon\Carbon;
@@ -85,15 +87,27 @@ class MedicineController extends Controller
             $appointment = Appointment::find($request->appointment_id);
 
             //dd($appointment);
+
             
             if ($appointment->admit == 'YES') {
                 $appointment->department = 'ward';
             } else {
                 $appointment->department = 'cashier';
             }
+
+            $obj = new stdClass;
+            $obj->medicine = $medicines;
+
+            $service = new PatentAppointmentService();
+            $service->patient_id = $appointment->patient_id;
+            $service->appointment_id = $request->appointment_id;
+            $service->service = json_encode($obj);
+            $service->save();
+
             
             //$appointment->doctor_id = $request->docname;
             $appointment->update();
+
             return view('medicine.receipt',compact('presc','medicines'));
         } catch (\Throwable $th) {
            return redirect()->back()->with('error',"Unkown Error Occured");
@@ -112,7 +126,6 @@ class MedicineController extends Controller
     public function getherbs()
     {
         $herbs = DB::table('medicines')->get();
-        // dd($herbs);
         return response()->json($herbs);
     }
 
@@ -120,14 +133,9 @@ class MedicineController extends Controller
         $pmedicines=Prescription_Medicine::where('prescription_id',$presid)->get();
         $title="Issue Medicine ($presid)";
         $prescription=Prescription::find($presid);
-
         $appointment = Appointment::where('id', '=', $prescription->appointment_id)->get()->last();
-
         $patient = Patients::where('id', '=', $prescription->patient_id)->first();
-
         //$medupdate = Medicine::where('id', '=', $pmedicines[0]->medicine_id)->first();
-
-        
         //dd($appointment->id);
         return view('patient.show',compact('pmedicines','title','presid','prescription', 'appointment', 'patient'));
     }
@@ -142,12 +150,17 @@ class MedicineController extends Controller
     public function search(Request $request)
     {
         $results = Patients::withTrashed()->where('name', 'LIKE', '%' . $request->keyword . '%')->get();
-        foreach ($results as $key => $patient) {
+        foreach ($results as $patient) {
             $appointment =  Appointment::where('patient_id', $patient->id)->get()->last();
-            $prescription = Prescription::where('appointment_id','=', $appointment->id)->first();
-            $patient->appointment = $appointment;
-            $patient->prescription = $prescription;
-
+            if ($appointment) {
+                $patient->appointment = $appointment;
+                $patient->prescription = null;
+                $prescription = Prescription::where('appointment_id','=', $appointment->id)->first();
+                if ($prescription) {
+                    $patient->prescription = $prescription;
+                }
+            }
+            
         }
         return response($results);
     }
@@ -180,9 +193,6 @@ class MedicineController extends Controller
                     "exist" => false,
                 ]);
             }
-        
-
-        
     }
 
   

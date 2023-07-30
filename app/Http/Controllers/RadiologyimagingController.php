@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Appointment;
 use App\Billing;
 use App\Measureradiology;
+use App\PatentAppointmentService;
 use App\Patients;
 use App\Radiologyimaging;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class RadiologyimagingController extends Controller
 {
@@ -44,8 +46,11 @@ class RadiologyimagingController extends Controller
         DB::transaction(function() use($request){
             $radiology = new Radiologyimaging();
 
+            $obj = new stdClass;
+
             if ($request->ct_Scan !== null) {
                 $radiology->ct_scan = $request->ct_Scan;
+                $obj->service = 'ct_scan';
             }
 
             if ($request->x_ray !== null) {
@@ -53,14 +58,17 @@ class RadiologyimagingController extends Controller
                 $radiology->reasion_for_exam = $request->reason_for_exam;
                 $radiology->technique = $request->technique;
                 $radiology->findings = $request->findings;
+                $obj->service = 'x_ray';
             }
 
             if ($request->ultra_sound !== null) {
                 $radiology->ultra_sound = $request->ultra_sound;
+                $obj->service = 'ultra_sound';
             }
 
             if ($request->mri !== null) {
                 $radiology->mri = $request->mri;
+                $obj->service = 'mri';
             }
 
             /*
@@ -100,13 +108,26 @@ class RadiologyimagingController extends Controller
             if ($appointment->admit == 'YES') {
                 $appointment->department = 'ward';
             } else {
-                $appointment->department = 'consultation';
-                
+                $doc = User::where('id','=', $appointment->doctor_id)->first();
+                if ($doc->user_type == 'doctor_physiotherapy') {
+                    $appointment->department = 'physiotherapy';
+                }
+
+                if ($doc->user_type == 'doctor_consultation') {
+                    $appointment->department = 'consultation';
+                }
+
+                if ($doc->user_type == 'doctor_dentist') {
+                    $appointment->department = 'dentist';
+                }
             }
-            
-            //$appointment->doctor_id = $request->docname;
             $appointment->update();
 
+            $service = new PatentAppointmentService();
+            $service->patient_id = $request->patient_id;
+            $service->appointment_id = $request->appointment_id;
+            $service->service = json_encode($obj);
+            $service->save();
         });
 
         return redirect()->route('searchRadiology');

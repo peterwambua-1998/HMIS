@@ -98,10 +98,6 @@ class CashierController extends Controller
         
         $results =  Patients::withTrashed()->where('name', 'LIKE', '%' . $request->keyword . '%')->get();
 
-        if(count($results) == 0) {
-            return response(0);  
-        }
-        
         foreach ($results as $key => $patient) {
             $appointment =  Appointment::where('patient_id', $patient->id)->get()->last();
             $patient->appointment = $appointment;

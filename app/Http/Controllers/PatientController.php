@@ -10,6 +10,8 @@ use App\DischargedPatient;
 use App\Http\Controllers\Redirect;
 use App\inpatient;
 use App\Lab;
+use App\LabMeasure;
+use App\LabMeasureResult;
 use App\Medicine;
 use App\PatentAppointmentService;
 use App\Patients;
@@ -283,14 +285,24 @@ class PatientController extends Controller
         $assinged_clinics = Patients::find($request->pid)->clinics;
         $clinics = Clinic::all();
         $triage = Triage::where('patient_id', '=', $patient->id)->where('created_at', 'LIKE', '%'.date('Y-m-d').'%')->get()->last();
-        $lab = Lab::where('patient_id', '=', $patient->id)->where('appointment_id', '=', $appointment->id)->get()->last();
+        $labs = LabMeasureResult::where('patient_id', '=', $patient->id)->where('appointment_id', '=', $appointment->id)->get();
+        if ($labs->isNotEmpty()) {
+            foreach ($labs as $key => $lab) {
+                $measure_name = LabMeasure::where('id','=',$lab->measure_id)->first();
+                $lab->measure_name = $measure_name->measure_name;
+                $lab->unit = $measure_name->unit_of_measurement;
+            }
+        }
         $dialysis = Dialysis::where('patient_id', '=', $patient->id)->get()->last();
         $medicines = Medicine::where('qty', '>', 0)->get();
         $imaging_radiology = Radiologyimaging::where('patient_id', '=', $patient->id)->where('appointment_id', '=', $appointment->id)->get()->last();
         $theatre = Theatre::where('patient_id', '=', $patient->id)->get()->last();
         $dentists = User::where('user_type','=', 'doctor_dentist')->get();
+        $physios = User::where('user_type','=', 'doctor_physiotherapy')->get();
+        $lab_measures = LabMeasure::all();
         return view('patient.check_patient_view', [
             'title' => "Check Patient",
+            'lab_measures' => $lab_measures,
             'appNum' => $request->appNum,
             'appID' => $appointment->id,
             'pName' => $appointment->patient->name,
@@ -304,7 +316,7 @@ class PatientController extends Controller
             'assinged_clinics' => $assinged_clinics,
             'clinics' => $clinics,
             'triage' => $triage,
-            'lab' => $lab,
+            'labs' => $labs,
             'dialysis' => $dialysis,
             'imaging_radiology' => $imaging_radiology,
             'user' => $user,
@@ -313,7 +325,8 @@ class PatientController extends Controller
             'patient' => $patient,
             'data' => $data,
             'select_doctors' => $select_doctors,
-            'dentists' => $dentists
+            'dentists' => $dentists,
+            'physios' => $physios
         ]);
     }
 
@@ -355,15 +368,7 @@ class PatientController extends Controller
         }
     }
 
-    public function sendToDentistFromConsultation(Request $request)
-    {
-        $appointment = Appointment::find($request->appointment_id);
-        $appointment->department = 'dentist';
-        $appointment->doctor_id = $request->doctor_id;
-        if($appointment->update()) {
-            return redirect()->route('create_channel_view')->with('success', 'Patient sent to dentist');
-        }
-    }
+
 
     public function checkPatientSave(Request $request)
     {
@@ -384,22 +389,21 @@ class PatientController extends Controller
             $appointment->department = $request->department;
             $appointment->update();
 
-            if (count($request->medicines) > 0) {
-                foreach ($request->medicines as $medicine) {
-                    $med = Medicine::where('name_english', 'LIKE', '%'.$medicine['name'] . '%')->first();
-                
-                    $pres_med = new Prescription_Medicine;
-                    $pres_med->medicine_id = $med->id;
-                    $pres_med->prescription_id = $presc->id;
-                    $pres_med->note = $medicine['note'];
-                    $pres_med->exp_date = $med->exp_date;
-                    $pres_med->save();
-                }
+            foreach ($request->medicines as $medicine) {
+                $med = Medicine::where('name_english', 'LIKE', '%'.$medicine['name'] . '%')->first();
+            
+                $pres_med = new Prescription_Medicine;
+                $pres_med->medicine_id = $med->id;
+                $pres_med->prescription_id = $presc->id;
+                $pres_med->note = $medicine['note'];
+                $pres_med->exp_date = $med->exp_date;
+                $pres_med->save();
             }
 
             $obj = new stdClass;
             $obj->diagnosis = $request->diagnosis;
-            $obj->service = $request->department;
+            //department from is where the patient is from
+            $obj->service = $request->department_from;
 
 
             $service = new PatentAppointmentService();
@@ -428,14 +432,16 @@ class PatientController extends Controller
         }
 
         if ($user->user_type == 'doctor_consultation') {
-            //dd($user);
             $appointments = $appointments->where('department', '=', 'consultation')->where('doctor_id', '=', $user->id);
         } 
 
-        if ($user->user_type == 'doctor') {
-            $appointments = $appointments->where('department', '=', 'consultation')->where('doctor_id', '=', $user->id);
+        if ($user->user_type == 'doctor_physiotherapy') {
+            $appointments = $appointments->where('department', '=', 'physiotherapy')->where('doctor_id', '=', $user->id);
         } 
 
+        if ($user->user_type == 'doctor_radiology_imaging') {
+            $appointments = $appointments->where('department', '=', 'radiology and imaging');
+        } 
 
         if ($user->user_type == 'triage') {
             $appointments = $appointments->where('department', '=', 'triage');
@@ -773,5 +779,23 @@ class PatientController extends Controller
 
     }
 
-   
+    public function sendToDentistFromConsultation(Request $request)
+    {
+        $appointment = Appointment::find($request->appointment_id);
+        $appointment->department = 'dentist';
+        $appointment->doctor_id = $request->doctor_id;
+        if($appointment->update()) {
+            return redirect()->route('create_channel_view')->with('success', 'Patient sent to dentist');
+        }
+    }
+
+    public function sendToPhysiotherapyFromConsultation(Request $request)
+    {
+        $appointment = Appointment::find($request->appointment_id);
+        $appointment->department = 'physiotherapy';
+        $appointment->doctor_id = $request->doctor_id;
+        if($appointment->update()) {
+            return redirect()->route('create_channel_view')->with('success', 'Patient sent to physiotherapy');
+        }
+    }
 }

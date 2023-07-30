@@ -116,24 +116,17 @@ use App\Triage;
                     <h4 style="text-decoration: underline">Diagnosis</h4>
                     <p class="text-primary" style="font-size:17px;font-weight:600">{{$presc->diagnosis}}</p>
                 </div>
-                
-                
-
                    
                 @php
-                    
                     $appointID = $presc->appointment->id;
-
                     $triage = \App\Triage::where('appointment_id', '=', $appointID)->first();
-
-                    $lab = \App\Lab::where('appointment_id', '=', $appointID)->first();
-                    
-
-                    if(! $lab){
-                        $lab = null;
+                    $labs = \App\LabMeasureResult::where('appointment_id', '=', $appointID)->get();
+                    if ($labs->isNotEmpty()) {
+                        foreach ($labs as $key => $lab) {
+                            $measure_name = LabMeasure::where('id','=',$lab->measure_id)->first()->measure_name;
+                            $lab->measure_name = $measure_name;
+                        }
                     }
-
-                    
 
                 @endphp
                 <div style="border: 1px solid gray; padding: 10px">
@@ -160,96 +153,15 @@ use App\Triage;
                     </h4>
                 </div>
                 
-                @if ($lab != null)
+                @if (count($labs) > 0)
                     <div style="border: 1px solid gray; padding: 10px">
                         <h4 style="text-decoration: underline">Lab Results</h4>
-                        @if ($lab->whitebooldcells !== null)
+                        @foreach ($labs as $lab)
                         <h4>
-                            White blood cell (WBC): <span class="text-green">{{ $lab->whitebooldcells }}</span>
+                            {{$lab->measure_name}}: <span class="text-green">{{ $lab->result }}</span>
                         </h4>
-                        @endif
-
-                        @if ($lab->redbooldcells !== null)
-                        <h4>
-                            Red blood cell (RBC) counts: <span class="text-green">{{ $lab->redbooldcells }}</span>
-                        </h4>
-                        @endif
-
-                        @if ($lab->prothrombintime !== null)
-                        <h4>
-                            PT, prothrombin time: <span class="text-green">{{ $lab->prothrombintime }}</span>
-                        </h4>
-                        @endif
-
-                        @if ($lab->activatedpartialthromboplastin !== null)
-                        <h4>
-                            APTT, activated partial thromboplastin time: <span class="text-green">{{ $lab->activatedpartialthromboplastin }}</span>
-                        </h4>
-                        @endif
-
-                        @if ($lab->aspartateaminotransferase !== null)
-                        <h4>
-                            AST, aspartate aminotransferase: <span class="text-green">{{ $lab->aspartateaminotransferase }}</span>
-                        </h4>
-                        @endif
-
-                        @if ($lab->alanineaminotransferase !== null)
-                        <h4>
-                            ALT, alanine aminotransferase: <span class="text-green">{{ $lab->alanineaminotransferase }}</span>
-                        </h4>
-                        @endif
-
-
-                        @if ($lab->mlactatedehydrogenase !== null)
-                        <h4>
-                            LD, lactate dehydrogenase: <span class="text-green">{{ $lab->mlactatedehydrogenase }}</span>
-                        </h4>
-                        @endif
-
-
-                        @if ($lab->bloodureanitrogen !== null)
-                        <h4>
-                            BUN, blood urea nitrogen: <span class="text-green">{{ $lab->bloodureanitrogen }}</span>
-                        </h4>
-                        @endif
-
-                        @if ($lab->WBCcountWdifferential !== null)
-                        <h4>
-                            WBC count w/differential: <span class="text-green">{{ $lab->WBCcountWdifferential }}</span>
-                        </h4>
-                        @endif
-
-                        @if ($lab->Quantitativeimmunoglobulin !== null)
-                        <h4>
-                            Quantitative immunoglobulin’s (IgG, IgA, IgM): <span class="text-green">{{ $lab->Quantitativeimmunoglobulin }}</span>
-                        </h4>
-                        @endif
-
-                        @if ($lab->Erythrocytesedimentationrate !== null)
-                        <h4>
-                            Erythrocyte sedimentation rate (ESR): <span class="text-green">{{ $lab->Erythrocytesedimentationrate }}</span>
-                        </h4>
-                        @endif
+                        @endforeach
                         
-
-                        @if ($lab->alpha_antitrypsin !== null)
-                        <h4>
-                            Quantitative alpha-1-antitrypsin (AAT) level: <span class="text-green">{{ $lab->alpha_antitrypsin }}</span>
-                        </h4>
-                        @endif
-
-
-                        @if ($lab->Reticcount !== null)
-                        <h4>
-                            Retic count: <span class="text-green">{{ $lab->Reticcount }}</span>
-                        </h4>
-                        @endif
-
-                        @if ($lab->arterialbloodgasses !== null)
-                        <h4>
-                            Arterial blood gasses (ABGs): <span class="text-green">{{ $lab->arterialbloodgasses }}</span>
-                        </h4>
-                        @endif
                     </div>
                 @endif
                 

@@ -8,21 +8,16 @@
 @section('content_title',__('Check Patient'))
 
 
-@if ($user->user_type == 'consultation')
+@if ($user->user_type == 'doctor_consultation')
     @section('content_description',__('Consultation'))  
 @endif
 
-@if ($user->user_type == 'dentist')
+@if ($user->user_type == 'doctor_dentist')
     @section('content_description',__('Dentist'))  
 @endif
 
 
-@if ($user->user_type == 'doctor')
-    @section('content_description',__('Check Patient here and update history from here !'))  
-@endif
-
-
-@if ($user->user_type == 'physiotherapy')
+@if ($user->user_type == 'doctor_physiotherapy')
     @section('content_description',__('Check Patient here and update physiotherapy from here !'))  
 @endif
 
@@ -68,16 +63,16 @@
                 <h4>
                     Blood Pressure :
                     <span class="h4 @if ($triage->blood_pressure>130) text-red @elseif ($triage->blood_pressure>125 ) text-yellow @else text-green @endif ">
-                        {{ $triage->blood_pressure }} mmHg <small> ({{ $triage->created_at }}) </small>
+                        {{ $triage->blood_pressure }} mmHg 
                     </span>
                 </h4>
                 
                 
                 <h4>
-                    Weight : <span class="text-green">{{ $triage->weight }} Kg <small> ({{ $triage->created_at }}) </small></span>
+                    Weight : <span class="text-green">{{ $triage->weight }} Kg</span>
                 </h4>
                 <h4>
-                    Temp : <span class="@if ($triage->blood_pressure>130) text-red @elseif ($triage->blood_pressure>125 ) text-yellow @else text-green @endif">{{ $triage->temp }} °C <small> ({{ $triage->created_at }}) </small></span>
+                    Temp : <span class="@if ($triage->blood_pressure>130) text-red @elseif ($triage->blood_pressure>125 ) text-yellow @else text-green @endif">{{ $triage->temp }} °C</span>
                 </h4>
                 <h4>
                     Brief History : <span class="text-green">{{ $triage->history }}</span>
@@ -89,101 +84,17 @@
                 @endif
                 
              
-                @if ($lab !== null)
-                   
+                @if (count($labs) > 0)
                     <div class="mb-2" style="border: 1px solid gray; padding: 10px">
-                    <h3 style="text-decoration: underline">
-                        Lab Results
-                    </h3>
+                        <h3 style="text-decoration: underline">
+                            Lab Results
+                        </h3>
 
-                    @if ($lab->whitebooldcells !== null)
+                        @foreach ($labs as $lab)
                         <h4>
-                            White blood cell (WBC): <span class="text-green">{{ $lab->whitebooldcells }}</span>
+                            {{$lab->measure_name}}: <span class="text-green">{{ $lab->result }} {{$lab->unit}}</span>
                         </h4>
-                    @endif
-
-                    @if ($lab->redbooldcells !== null)
-                    <h4>
-                        Red blood cell (RBC) counts: <span class="text-green">{{ $lab->redbooldcells }}</span>
-                    </h4>
-                    @endif
-
-                    @if ($lab->prothrombintime !== null)
-                    <h4>
-                        PT, prothrombin time: <span class="text-green">{{ $lab->prothrombintime }}</span>
-                    </h4>
-                    @endif
-
-                    @if ($lab->activatedpartialthromboplastin !== null)
-                    <h4>
-                        APTT, activated partial thromboplastin time: <span class="text-green">{{ $lab->activatedpartialthromboplastin }}</span>
-                    </h4>
-                    @endif
-
-                    @if ($lab->aspartateaminotransferase !== null)
-                    <h4>
-                        AST, aspartate aminotransferase: <span class="text-green">{{ $lab->aspartateaminotransferase }}</span>
-                    </h4>
-                    @endif
-
-                    @if ($lab->alanineaminotransferase !== null)
-                    <h4>
-                        ALT, alanine aminotransferase: <span class="text-green">{{ $lab->alanineaminotransferase }}</span>
-                    </h4>
-                    @endif
-
-
-                    @if ($lab->mlactatedehydrogenase !== null)
-                    <h4>
-                        LD, lactate dehydrogenase: <span class="text-green">{{ $lab->mlactatedehydrogenase }}</span>
-                    </h4>
-                    @endif
-
-
-                    @if ($lab->bloodureanitrogen !== null)
-                    <h4>
-                        BUN, blood urea nitrogen: <span class="text-green">{{ $lab->bloodureanitrogen }}</span>
-                    </h4>
-                    @endif
-
-                    @if ($lab->WBCcountWdifferential !== null)
-                    <h4>
-                        WBC count w/differential: <span class="text-green">{{ $lab->WBCcountWdifferential }}</span>
-                    </h4>
-                    @endif
-
-                    @if ($lab->Quantitativeimmunoglobulin !== null)
-                    <h4>
-                        Quantitative immunoglobulin’s (IgG, IgA, IgM): <span class="text-green">{{ $lab->Quantitativeimmunoglobulin }}</span>
-                    </h4>
-                    @endif
-
-                    @if ($lab->Erythrocytesedimentationrate !== null)
-                    <h4>
-                        Erythrocyte sedimentation rate (ESR): <span class="text-green">{{ $lab->Erythrocytesedimentationrate }}</span>
-                    </h4>
-                    @endif
-                    
-
-                    @if ($lab->alpha_antitrypsin !== null)
-                    <h4>
-                        Quantitative alpha-1-antitrypsin (AAT) level: <span class="text-green">{{ $lab->alpha_antitrypsin }}</span>
-                    </h4>
-                    @endif
-
-
-                    @if ($lab->Reticcount !== null)
-                    <h4>
-                        Retic count: <span class="text-green">{{ $lab->Reticcount }}</span>
-                    </h4>
-                    @endif
-
-                    @if ($lab->arterialbloodgasses !== null)
-                    <h4>
-                        Arterial blood gasses (ABGs): <span class="text-green">{{ $lab->arterialbloodgasses }}</span>
-                    </h4>
-                    @endif
-                    
+                        @endforeach
                     </div>
                 @endif
 
@@ -614,6 +525,10 @@
                         <button type="button" class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#radiology">
                             Radiology</button>
                         <br>
+                        @if (Auth::user()->user_type != 'doctor_physiotherapy')
+                        <button style="width: fit-content;" class="btn btn-block btn-success btn-lg text-center" data-toggle="modal" data-target="#physiotherapy">
+                            Physiotherapy</button>
+                        @endif
                         
                     </div>
                 </div>
@@ -641,6 +556,36 @@
         </div>
     </div>
 
+</div>
+
+
+<div class="modal fade" id="physiotherapy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <form action="{{route('consultation-sendto-physiotherapy')}}" method="POST">
+        @csrf
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabel">Send To Physiotherapy</h4>
+        </div>
+        <div class="modal-body">
+            <label>Select Physiotherapist</label>
+            <select name="doctor_id" id="" class="form-control">
+                <option>Select...</option>
+                @foreach ($physios as $physio)
+                    <option value="{{$physio->id}}">{{$physio->name}}</option>
+                @endforeach
+            </select>
+
+            <input type="hidden" name="patient_id" value="{{ $patient->id }}">
+            <input type="hidden" name="appointment_id" value="{{$appID}}">
+        </div>
+        <div class="modal-footer text-center">
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn bg-green">Save changes</button>
+        </div>
+      </div>
+    </form>
+    </div>
 </div>
 
 <div class="modal fade" id="dentist" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -685,6 +630,7 @@
         </div>
         <div class="modal-body">
             <div class="row">
+                {{--  
                 <div class="col-md-6">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="White blood cell (WBC)" id="defaultCheck1" name="whitebooldcells">
@@ -802,6 +748,18 @@
                             Arterial blood gasses (ABGs)
                         </label>
                       </div>
+                </div>
+                --}}
+                <div class="col-md-12">
+                @foreach ($lab_measures as $measure)
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="{{$measure->id}}" id="defaultCheck1" name="measures[]">
+                        <label class="form-check-label" for="defaultCheck1">
+                            {{$measure->measure_name}}
+                        </label>
+                    </div>
+                    <br>
+                @endforeach
                 </div>
                 <br>
                 <div class="col-md-6 mt-4">
@@ -1126,9 +1084,6 @@
                             <option value="{{ $select_doctor->name }}">Dr {{ $select_doctor->name }}</option>
                                         
                         @endforeach
-                                    
-                                    
-                                    
                     </select>
                 </div>
             </div>
@@ -1400,26 +1355,35 @@
                         if ("{{ $user->user_type}}" == 'doctor_dentist') {
                             var amount = 0;
                             var billing_for = "dentist";
+                            var department_from = 'dentist';
+                        }
+
+                        if ("{{ $user->user_type}}" == 'doctor_physiotherapy') {
+                            var amount = 0;
+                            var billing_for = "physiotherapy";
+                            var department_from = 'physiotherapy';
                         }
 
                         if ("{{ $user->user_type}}" == 'doctor_consultation') {
                             var amount = 0;
                             var billing_for = "consultation";
+                            var department_from = 'consultation';
+
                         }
 
-                        if ("{{ $user->user_type}}" == 'doctor') {
+                        if ("{{ $user->user_type}}" == 'doctor_counselling') {
                             var amount = 0;
-                            var billing_for = "consultation";
+                            var billing_for = "counselling";
+                            var department_from = 'counselling';
+
                         }
 
                         if ("{{ $user->user_type}}" == 'admin') {
                             var amount = 0;
                             var billing_for = "consultation";
+                            var department_from = 'consultation';
+
                         }
-                        
-                        if (medicines.length === 0) {
-                            var dept = 'cashier';
-                        } 
                         
                         var payment_method = "{{$payment_method}}";
                         var completed = 'NO';
@@ -1434,7 +1398,8 @@
                             billing_for:billing_for,
                             payment_method: payment_method,
                             completed: completed,
-                            department: 'cashier'
+                            department: 'pharmacy',
+                            department_from: department_from,
                         };
                         $.ajax({
                             type: "POST",

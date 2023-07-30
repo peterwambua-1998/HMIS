@@ -194,46 +194,29 @@
                     <thead>
                         <tr>
                             <th>{{__('Queue No')}}</th>
-                            
                             <th>{{__('Name')}}</th>
-
                             <th>{{__('Patient No.')}}</th>
-                            
-                            
-                            
                             <th>{{__('Department')}}</th>
                             <th>Doctor</th>
                             <th>Payment Method</th>
-                            
-                           
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($appointments as $app)
                             @if ($app->department !== 'done')
-                            
                                 @if ($app->admit !== 'YES')
                                 <tr>
-
                                     <td>{{$app->number}}</td>
-                                    
                                     <td>{{$app->name}}</td>
                                     <td>{{$app->patient_id}} <button  onclick="myCopy( {{ $app->patient_id }}) ">copy</button></td>
-                                    
-                                    
-                                    
                                     <td>{{ $app->department }}</td>
                                     <td>Dr. {{ App\User::where('id', '=', $app->doctor_id)->first()->name }}</td>
                                     <td>{{ $app->mode_of_payment }}</td>
-                                    
                                 </tr>
                                 @endif
-                                
                             @endif
                         @endforeach
                     </tbody>
-                    
-
                 </table>
             </div>
             <!-- /.box-body -->

@@ -116,8 +116,6 @@
                                 <h4 style="text-decoration: underline">Recommendation</h4>
                                 <h5 class="text-primary" style="font-size:17px;font-weight:600">{{ $dialysi->Recommendation }}<small> 
                                     </small></h5>
-                
-                                
                             </div>
                 
                         </div>

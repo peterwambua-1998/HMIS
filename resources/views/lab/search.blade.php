@@ -31,7 +31,7 @@
     }
 
     label {
-        font-size: 18px; 
+        font-size: 16px; 
     }
 </style>
 
@@ -70,8 +70,10 @@
             </div>
         </div>
 
-        <div id="patient-append"></div>
+        
     </div>
+
+    <div id="patient-append"></div>
 </div>
 
 
@@ -124,7 +126,7 @@
                 for (let i = 0; i < response.length; i++) {
                         let template = `
                         <div class="col-md-12">
-                            <div class="box box-successbox box-success">
+                            <div class="box box-successbox box-success mt-5">
                                 <div class="box-body pl-5 pr-5 pb-5">
                                     <form action="{{route('commencelab')}}" method="post">
                                         @csrf
@@ -183,7 +185,6 @@
                                                         name="reg_pbd" placeholder="Birthday">
                                                     <input readonly value="${response[i].id}" type="text" class="form-control pull-right"
                                                         name="reg_pid" style="display:none">
-
                                                 </div>
                                             </div>
                                         </div>

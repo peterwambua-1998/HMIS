@@ -157,6 +157,10 @@ Route::get('/searchlab', ['as' => 'searchLab', 'uses' => 'LabController@index'])
 Route::post('/searchpostlab', ['as' => 'searchLabPost', 'uses' => 'LabController@search']);
 Route::post('/addLab', ['as' => 'addLab', 'uses' => 'LabController@store']);
 Route::post('/commence-lab', ['as' => 'commencelab', 'uses' => 'LabController@startLab']);
+Route::get('/lab-measures', ['as' => 'labMeasure', 'uses' => 'LabController@measureList']);
+Route::post('/save-measure', ['as' => 'saveMeasure', 'uses' => 'LabController@saveMeasure']);
+Route::get('/edit-measure/{id}', ['as' => 'measure_edit', 'uses' => 'LabController@editMeasure']);
+Route::post('/update-measure', ['as' => 'measure_update', 'uses' => 'LabController@updateMeasure']);
 
 
 //Dialysis
@@ -250,7 +254,8 @@ Route::post('/savedeliveryinfo', ['as' => 'savedeliveryinfo', 'uses' => 'Antenat
 
 //send patient to dentist from consultation
 Route::post('/consultation-sendto-dentist', ['as' => 'consultation-sendto-dentist','uses' => 'PatientController@sendToDentistFromConsultation']);
-
+//send patient to phsiotherapy from consultation
+Route::post('/consultation-sendto-physiotherapy', ['as' => 'consultation-sendto-physiotherapy','uses' => 'PatientController@sendToPhysiotherapyFromConsultation']);
 
 //excel medicine
 Route::get('/medicine-excel-view', ['as' => 'medexcelview', 'uses' => "MedicineExcelController@index"]);

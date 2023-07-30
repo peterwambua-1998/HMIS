@@ -58,7 +58,7 @@ $outlet = '';
     <link rel="stylesheet" href="{{asset('bower_components/datatables.net-bs/css/buttons.dataTables.min.css')}}">
     <link rel="stylesheet"
         href="{{asset('bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css')}}">
-    <link rel="stylesheet" href="{{asset('dist/css/AdminLTE.min.css')}}">
+    <link rel="stylesheet" href="{{asset('dist/css/adminLTE.min.css')}}">
     
 
 
@@ -360,12 +360,7 @@ $outlet = '';
 
                     
                     
-                    @if($user_type!='Pharmacist')
-
-                    @if ( $user_type!='Triage')
-                        
-                    
-                    
+                    @if(Auth::user()->user_type == 'reception' || Auth::user()->user_type == 'admin')
                     {{--patient--}}
                     <li
                         class="treeview {{Active::checkRoute(['patient','register_in_patient_view','searchPatient','searchData','patientProfileIntro','patientProfile'])}}">
@@ -394,15 +389,9 @@ $outlet = '';
                                     href="{{route('register_in_patient_view')}}"><i class="fas fa-user-plus"
                                     area-hidden="true"></i><span> Register In Patient</span></a>
                             </li>
-
-                            
-
                         </ul>
                     </li>
                     @endif
-
-                    @endif
-                    
                     
                     {{--create channel--}}
                     <li class="{{Active::checkRoute('create_channel_view')}}">
@@ -414,7 +403,7 @@ $outlet = '';
 
                     
 
-                    @if($user_type=='Admin' || $user_type=='Triage')
+                    @if($user_type =='Admin' || $user_type =='Triage')
                     <li class="{{Active::checkRoute('searchTriage')}}">
                         <a href="{{route('searchTriage')}}">
                         <i class="fa-solid fa-stethoscope" aria-hidden="true"></i>
@@ -423,48 +412,43 @@ $outlet = '';
                     </li>
                     
                     @endif
-                    @if($user_type=='Admin' || $user_type=='Lab')
-                    
-                    <li class="{{Active::checkRoute('searchLab')}}"><a
-                            href="{{route('searchLab')}}"><i class="fa fa-flask" aria-hidden="true"></i><span> Lab
-                                </span></a></li>
+                    @if($user_type =='admin' || $user_type=='Lab')
+                        <li class="{{Active::checkRoute('searchLab')}}"><a href="{{route('searchLab')}}"><i class="fa fa-flask" aria-hidden="true"></i><span> Lab</span></a></li>
+                    @endif
+
+                    @if($user_type =='admin' || $user_type=='Lab')
+                        <li class="{{Active::checkRoute('searchLab')}}"><a href="{{route('labMeasure')}}"><i class="fa fa-flask" aria-hidden="true"></i><span> Lab Measure List</span></a></li>
                     @endif
                     
-                    @if($user_type=='Admin' || $user_type=='Doctor' || $user_type=="Doctor_consultation")
+                    @if(Auth::user()->user_type=='admin' || $user_type=='Doctor' || $user_type=="Doctor_consultation")
                     {{--check patient--}}
                     <li class="{{Active::checkRoute('check_patient_view')}}"><a
                             href="{{route('check_patient_view')}}"><i class="fa fa-user-md" aria-hidden="true"></i><span> Consultation</span></a></li>
                     @endif
 
-                    @if ($user_type == "Doctor_dentist" || $user_type=='Admin')
+                    @if ($user_type == "Doctor_dentist" || Auth::user()->user_type=='admin')
                     <li class="{{Active::checkRoute('check_patient_view')}}"><a
                         href="{{route('check_patient_view')}}">
                         <i class="fa fa-tooth"></i>
                     <span> Dentist</span></a></li>
                     @endif
 
-                    
-
-                    @if ($user_type=='Doctor_physiotherapy' || $user_type=='Admin')
+                    @if ($user_type=='Doctor_physiotherapy' || Auth::user()->user_type=='admin')
                     <li class="{{Active::checkRoute('check_patient_view')}}"><a
                         href="{{route('check_patient_view')}}"><i class="fa fa-wheelchair" aria-hidden="true"></i><span> Physiotherapy</span></a></li>
                     @endif
 
-                    
-
-                    @if ($user_type=='Doctor_counselling' || $user_type=='Admin')
+                    @if ($user_type=='Doctor_counselling' || Auth::user()->user_type=='admin')
                     <li class="{{Active::checkRoute('check_patient_view')}}"><a
                         href="{{route('check_patient_view')}}"><i class="fa fa-couch" aria-hidden="true"></i><span> Counselling</span></a></li>
                     @endif
 
-                    @if ($user_type == "Radiology_imaging"  || $user_type=="Admin")
+                    @if (Auth::user()->user_type == "doctor_radiology_imaging"  || Auth::user()->user_type=="admin")
                     <li class="{{Active::checkRoute('searchRadiology')}}"><a href="{{route('searchRadiology')}}">
                         <i class="fa fa-image"></i><span>Radiology and Imaging</span></a></li>
                     @endif
-
-
                    
-                    @if($user_type=='Pharmacist' || $user_type=='Admin')
+                    @if(Auth::user()->user_type=='pharmacist' || Auth::user()->user_type=='admin')
                     {{--Issue Medicine--}}
                     <li class="{{Active::checkRoute('issueMedicineView')}}"><a href="{{route('issueMedicineView')}}">
                         <i class="fa fa-capsules"></i><span> Pharmacy</span></a></li>  
@@ -473,26 +457,18 @@ $outlet = '';
                         <i class="fa fa-list-alt" aria-hidden="true"></i><span> Medicine Inventory</span></a></li>  
                         <li class="{{Active::checkRoute('medinventoryadd')}}"><a href="{{route('medinventoryadd')}}">
                         <i class="fa-solid fa-notes-medical"></i><span> Add Medicine</span></a></li>  
-                                
                     @endif
                     
-
-                    @if ($user_type == "Theatre"  || $user_type=="Admin")
+                    @if (Auth::user()->user_type == "Theatre"  || Auth::user()->user_type=="admin")
                     <li class="{{Active::checkRoute('searchtheatre')}}"><a href="{{route('searchtheatre')}}" aria-hidden="true"><i class="fa-solid fa-temperature-arrow-up"></i> <span>Theatre</span></a></li>
                     @endif
 
-
-                   
-                    
-
-                    @if ($user_type == "Dialysis"  || $user_type=="Admin")
+                    @if (Auth::user()->user_type == "Dialysis"  || Auth::user()->user_type=="admin")
                     <li class="{{Active::checkRoute('searchDialysis')}}"><a href="{{route('searchDialysis')}}"><i class="fa-solid fa-boxes-packing"></i> <span> Dialysis</span></a></li>
                     @endif
 
-                    
-
                     {{--maternity--}}
-                    
+                    @if (Auth::user()->user_type == "doctor_maternity" || Auth::user()->user_type=="admin")
                         <li
                         class="treeview {{Active::checkRoute(['checkmertanitypatient', 'deliveryinto'])}}">
                         <a href="#"><i class="fa fa-baby-carriage"></i><span> Maternity</span>
@@ -508,16 +484,11 @@ $outlet = '';
                             <li class="{{Active::checkRoute('deliveryinto')}}"><a href="{{route('deliveryinto')}}"></i><i
                                         class="fa fa-baby-carriage" aria-hidden="true"></i>
                                         Delivery</a></li>
-
-                                        
-                            
-
                         </ul>
                     </li>
-                    
-                    
+                    @endif
 
-                    @if ($user_type == "Cashier" || $user_type=="Admin")
+                    @if (Auth::user()->user_type == "cashier" || Auth::user()->user_type=="admin")
                     <li class="{{Active::checkRoute('cashiercheckp')}}">
                         <a href="{{route('cashiercheckp')}}">
                             <i class="fa fa-credit-card" aria-hidden="true"></i>
@@ -525,9 +496,8 @@ $outlet = '';
                         </a>
                     </li>
                     @endif
-
                     {{--
-                    @if ($user_type == "Cashier" || $user_type=="Admin")
+                    @if ($user_type == "Cashier" || $user_type=="admin")
                     <li class="{{Active::checkRoute('inpatientlist')}}">
                         <a href="{{route('inpatientlist')}}">
                             <i class="fa fa-credit-card" aria-hidden="true"></i>
@@ -552,7 +522,7 @@ $outlet = '';
                                         class="fas fa-user-plus" aria-hidden="true"></i>
                                     Check Inpatient</a></li>
 
-                                    @if($user_type=='Doctor' || $user_type=='Admin')
+                                    @if(Auth::user()->user_type=='Doctor' || Auth::user()->user_type=='admin')
                                     {{--discharge in patient--}}
                                     <li class="{{Active::checkRoute('discharge_inpatient')}}"><a
                                             href="{{route('discharge_inpatient')}}"><i class="fa fa-hospital-o"
@@ -571,7 +541,7 @@ $outlet = '';
 
                     {{--
                     
-                    @if ($user_type == "Physiotherapy" || $user_type=="Admin")
+                    @if ($user_type == "Physiotherapy" || $user_type=="admin")
                     <li class="{{Active::checkRoute('searchphysiotherapy')}}"><a href="{{route('searchphysiotherapy')}}"><i
                         class="fa fa-plus-square"></i><span>Physiotherapy</span></a></li>
                     @endif
@@ -598,7 +568,7 @@ $outlet = '';
                     </li>
 
                     --}}
-                    @if($user_type=='Admin' || $user_type == 'Accounts')
+                    @if(Auth::user()->user_type=='admin' || Auth::user()->user_type == 'Accounts')
                     <li class="{{Active::checkRoute('accountsearch')}}">
                         <a href="{{route('accountsearch')}}">
                             <i class="fa-solid fa-receipt"></i>
@@ -607,7 +577,7 @@ $outlet = '';
                     </li>
                     @endif
 
-                    @if($user_type=='Admin')
+                    @if(Auth::user()->user_type=='admin')
                     {{-- Users Operations --}}
 
                     <li class="{{Active::checkRoute(['newuser','regfinger','resetuser'])}} treeview">
@@ -636,13 +606,13 @@ $outlet = '';
 
                     {{-- Wards --}}
 
-                    @if($user_type=='Admin' || $user_type=='Doctor' || $user_type=='radiology_imaging')
+                    @if(Auth::user()->user_type=='admin' || Auth::user()->user_type == 'nurse')
                     <li class="{{Active::checkRoute('wards')}}"><a href="{{route('wards')}}"><i
                                 class="fas fa-warehouse"></i>
                             <span>&nbsp;Wards</span></a></li>
                     @endif
 
-                    @if($user_type=="Admin")
+                    @if($user_type=="admin")
                     {{--add notices--}}
                     <li class="{{Active::checkRoute('createnoticeview')}}">
                         <a href="{{route('createnoticeview')}}">
@@ -654,7 +624,7 @@ $outlet = '';
 
                     
 
-                    @if($user_type=="Admin"||$user_type=="Doctor")
+                    @if($user_type=="admin"||$user_type=="Doctor")
                     {{--statistics--}}
                     <li class="{{Active::checkRoute(['stats','stats_old'])}}">
                         <a href="{{route('stats')}}">
@@ -666,7 +636,7 @@ $outlet = '';
 
 
                     {{--report generation--}}
-                    @if($user_type=="Admin"||$user_type=="Doctor")
+                    @if($user_type=="admin"||$user_type=="Doctor")
                     <li
                         class="treeview {{Active::checkRoute(['inPatientReport','inPatientReportData','clinic_reports','mob_clinic_report','mon_stat_report','out_p_report','attendance_report'])}}">
                         <a href="#">
@@ -679,7 +649,7 @@ $outlet = '';
                         <ul class="treeview-menu">
                             
 
-                            @if($user_type=="Admin"||$user_type=="Doctor")
+                            @if($user_type=="admin"||$user_type=="Doctor")
                             <li class="{{Active::checkRoute('mon_stat_report')}}"><a
                                     href="{{route('mon_stat_report')}}"><i class="fa fa-sticky-note"
                                         aria-hidden="true"></i> Monthly Statistic Report</a></li>
