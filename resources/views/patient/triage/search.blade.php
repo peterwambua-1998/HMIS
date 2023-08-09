@@ -21,8 +21,8 @@
 
     #keyword {
         margin-top: 50px;
-        height: 50px;
-        font-size: 20px; 
+        height: 40px;
+        font-size: 16px; 
     }
 
     .btn-default {
@@ -31,7 +31,7 @@
     }
 
     label {
-        font-size: 16px; 
+        font-size: 14px; 
     }
 </style>
 
@@ -49,15 +49,15 @@
         @endif
         <div class="box box-successbox box-success">
             <div class="box-header with-border">
-                <h3 class="box-title">{{__('Triage')}} <small class="ml-2" style="font-weight: bold">(Check queue for patient number)</small></h3>
+                <h3 class="box-title">{{__('Triage')}}</h3>
             </div>
             <div class="box-body">
                 <div class="pl-5 pr-5 pb-5">
-                    <h3>{{__('Enter Patient Name To Begin Triage Test')}}</h3>
+                    <h4>{{__('Enter patient name')}}</h4>
                     <label class="mr-2" style="display: none">
                         <input onchange="changeFunc('Patient Name');" checked style="display:inline-block" type="radio"
                             name="cat" id="cat" value="name">
-                        {{__('Patient Name')}} <span class="ml-4" style="font-size: 14px; color: rgb(100, 100, 100);"> (Check Queue for Patient Number)</span>
+                        {{__('Patient Name')}}
                     </label>
                     <input required type="text"  class="form-control" id="keyword" name="keyword"
                     placeholder="Enter Name" style="margin-top: 2px" @if($old_keyword) value="{{$old_keyword}}" @endif>
@@ -66,6 +66,8 @@
             </div>
         </div>
     </div>
+
+    
 
     <div id="patient-append">
 
@@ -124,7 +126,8 @@
             success: function (response) {
                 console.log(response);
                 $('#patient-append').children().remove();
-                for (let i = 0; i < response.length; i++) {
+                if (response.length > 0) {
+                    for (let i = 0; i < response.length; i++) {
                         let template = `
                         <div class="col-md-12">
                             <div class="box box-successbox box-success">
@@ -156,7 +159,7 @@
                                         <div class="form-group">
                                             <label for="inputPassword3" class="col-sm-2 control-label">{{__('Telephone')}}</label>
                                             <div class="col-sm-10">
-                                                <input readonly value="${response[i].telephone}" type="tel" class="form-control"
+                                                <input readonly value="${response[i].contactnumber}" type="tel" class="form-control"
                                                     name="reg_ptel" placeholder="Patient Telephone Number">
                                             </div>
                                         </div>
@@ -204,7 +207,19 @@
                         `; 
 
                         $('#patient-append').append(template);
+                    }
+                } else {
+                    let errorTemplate = `
+                        <div class="col-md-12">
+                            <div style="background: #fcdce1; color: #f26982; padding: 2%; border; font-size: 14px; border-radius: 0.375rem;">
+                                <p><span class="mr-2"><i class="fa-solid fa-triangle-exclamation"></i></span> <span>Kindly try again, search returned zero results</span></p>    
+                            </div>    
+                        </div>
+                    `;
+
+                    $('#patient-append').append(errorTemplate);
                 }
+                
             }
         })
     })

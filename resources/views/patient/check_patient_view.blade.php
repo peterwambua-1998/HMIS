@@ -31,6 +31,11 @@
 @endsection
 @section('main_content')
 
+<style>
+    .my-box-body {
+        font-size: 10px !important;
+    }
+</style>
 
 <script src="js/typeahead/typeahead.bundle.js"></script>
 {{-- <script src="js/typeahead/typeahead.jquery.js"></script> --}}
@@ -59,54 +64,52 @@
             <div class="box-header with-border">
                 <h3 class="box-title"> <i class="fas fa-notes-medical"></i>&nbsp; Appointment & Patient's Details</h3>
             </div>
-            <div class="box-body">
-                <div class="mb-2" style="border: 1px solid gray; padding: 10px">
-                <h4>Appointment Number : {{$appNum}}</h4>
-                <h4>Name : {{$pName}}</h4>
-                <h4>Age & Sex : {{$pAge}} {{$pSex}}</h4>
+            <div class="box-body my-box-body" style="">
+                <div class="mb-2" style="border: 1px solid gray; padding: 10px;">
+                    <h4 style="font-size: 16px;"><span style="font-weight: bold">Name :</span> {{$pName}}</h4>
+                    <h4 style="font-size: 16px;"><span style="font-weight: bold">Phone :</span> {{$patient->contactnumber}}</h4>
+                    <h4 style="font-size: 16px;"><span style="font-weight: bold">Age :</span> {{$pAge}} years</h4>
                 </div>
                 
                 
                 @if ($triage !== null)
-                
-
-                <div class="mb-2" style="border: 1px solid gray; padding: 10px">
-                <h3 style="text-decoration: underline">
-                    Triage Results
-                </h3>
-                <h4>
-                    Blood Pressure :
-                    <span class="h4 @if ($triage->blood_pressure>130) text-red @elseif ($triage->blood_pressure>125 ) text-yellow @else text-green @endif ">
-                        {{ $triage->blood_pressure }} mmHg 
-                    </span>
-                </h4>
-                
-                
-                <h4>
-                    Weight : <span class="text-green">{{ $triage->weight }} Kg</span>
-                </h4>
-                <h4>
-                    Temp : <span class="@if ($triage->blood_pressure>130) text-red @elseif ($triage->blood_pressure>125 ) text-yellow @else text-green @endif">{{ $triage->temp }} °C</span>
-                </h4>
-                <h4>
-                    Brief History : <span class="text-green">{{ $triage->history }}</span>
-                </h4>
-                <h4>
-                    Allergies : <span class="text-green">{{ $triage->allergies }}</span>
-                </h4>
-                </div>
+                    <div class="mb-2" style="border: 1px solid gray; padding-left: 10px;padding-right: 10px;padding-bottom: 10px">
+                        <h3 style="font-size: 18px; margin-bottom: 2%">
+                            <span style="font-weight: 500">Triage Results</span>
+                        </h3>
+                        <h4 style="font-size: 14px;">
+                            <span style="font-weight: bold">Blood Pressure :</span>
+                            <span class=" @if ($triage->blood_pressure>130) text-red @elseif ($triage->blood_pressure>125 ) text-yellow @else text-green @endif ">
+                                {{ $triage->blood_pressure }} mmHg 
+                            </span>
+                        </h4>
+                        
+                        
+                        <h4 style="font-size: 14px;">
+                            <span style="font-weight: bold">Weight :</span> <span class="text-green">{{ $triage->weight }} Kg</span>
+                        </h4>
+                        <h4 style="font-size: 14px;">
+                            <span style="font-weight: bold">Temp :</span> <span class="@if ($triage->blood_pressure>130) text-red @elseif ($triage->blood_pressure>125 ) text-yellow @else text-green @endif">{{ $triage->temp }} °C</span>
+                        </h4>
+                        <h4 style="font-size: 14px;">
+                            <span style="font-weight: bold">Brief History :</span> <span class="text-green">{{ $triage->history }}</span>
+                        </h4>
+                        <h4 style="font-size: 14px;">
+                            <span style="font-weight: bold">Allergies :</span> <span class="text-green">{{ $triage->allergies }}</span>
+                        </h4>
+                    </div>
                 @endif
                 
              
                 @if (count($labs) > 0)
                     <div class="mb-2" style="border: 1px solid gray; padding: 10px">
-                        <h3 style="text-decoration: underline">
+                        <h3 style="font-size: 18px; margin-bottom: 2%">
                             Lab Results
                         </h3>
 
                         @foreach ($labs as $lab)
-                        <h4>
-                            {{$lab->measure_name}}: <span class="text-green">{{ $lab->result }} {{$lab->unit}}</span>
+                        <h4 style="font-size: 16px;">
+                            <span style="font-weight: bold">{{$lab->measure_name}}:</span> <span class="text-green">{{ $lab->result }} {{$lab->unit}}</span>
                         </h4>
                         @endforeach
                     </div>
@@ -180,12 +183,6 @@
                         Recommendation: <span class="text-green">{{ $dialysis->Recommendation }}</span>
                     </h4>
                 @endif
-                
-                
-
-                
-
-                
 
                 @if ($theatre !== null)
                 <hr>
@@ -527,13 +524,13 @@
                    
                     <div class="p-2 mt-5 ml-1 mr-1">
                         
-                        <button type="button"  class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#lab">
+                        <button type="button" style="font-size: 14px;"  class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#lab">
                             Lab</button>
                         <br>
-                        <button type="button" class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#dentist">
+                        <button type="button" style="font-size: 14px;" class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#dentist">
                             Dentist</button>
                         <br>
-                        <button type="button" class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#counselling">
+                        <button type="button" style="font-size: 14px;" class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#counselling">
                             counselling</button>
                         <br>
                     </div>
@@ -541,11 +538,11 @@
 
                 <div class="col-md-2">
                     <div class="p-2 mt-5 ml-1 mr-1">
-                        <button type="button" class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#radiology">
+                        <button type="button" style="font-size: 14px;" class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#radiology">
                             Radiology</button>
                         <br>
                         @if (Auth::user()->user_type != 'doctor_physiotherapy')
-                        <button style="width: fit-content;" class="btn btn-block btn-success btn-lg text-center" data-toggle="modal" data-target="#physiotherapy">
+                        <button style="width: fit-content;font-size: 14px;" class="btn btn-block btn-success btn-lg text-center" data-toggle="modal" data-target="#physiotherapy">
                             Physiotherapy</button>
                         @endif
                         
@@ -553,20 +550,20 @@
                 </div>
                 <div class="col-md-2">
                     <div class="p-2 mt-5 ml-1 mr-1">
-                        <button type="button" onclick="submit()" class="btn btn-block btn-success btn-lg">Save &
+                        <button type="button" onclick="submit()" style="font-size: 14px;" class="btn btn-block btn-success btn-lg">Save &
                             Next</button>
                         <br>
                         @if ($inpatient=="YES")
-                        <button disabled type="button" class="btn btn-block btn-primary btn-lg">Inpatient</button>
+                        <button disabled type="button" style="font-size: 14px;" class="btn btn-block btn-primary btn-lg">Inpatient</button>
                         @endif
 
                         @if ($inpatient=="NO")
-                        <button id="admit-btn" type="button" onclick="myfunc()"
+                        <button id="admit-btn" style="font-size: 14px;" type="button" onclick="myfunc()"
                             class="btn btn-block btn-warning btn-lg">Admit Patient</button>
                         @endif
 
                         <br>
-                        <button type="button" onclick="clearAll()"
+                        <button type="button" style="font-size: 14px;" onclick="clearAll()"
                             class="btn btn-block btn-danger btn-lg">Clear</button>
                     </div>
                 </div>

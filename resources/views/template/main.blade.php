@@ -49,8 +49,6 @@ $outlet = '';
 
 
     <!-- Google Font -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('bower_components/Ionicons/css/ionicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('dist/css/skins/skin-blue.min.css')}}">
@@ -66,8 +64,9 @@ $outlet = '';
 
     @yield('custom_style_sheets')
     <link rel="stylesheet" href="{{ URL::asset('/css/bsutility.css') }}">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <link rel="shortcut icon" type="image/png" href="{{asset('images/logo.png')}}" />
 
@@ -678,6 +677,7 @@ $outlet = '';
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
+            {{--  
             <section class="content-header">
                 <h1>
                     @yield('content_title')
@@ -686,7 +686,7 @@ $outlet = '';
                 @yield('breadcrumbs')
 
             </section>
-
+--}}
             <!-- Main content -->
             <section class="content container-fluid">
                 @yield('main_content')
