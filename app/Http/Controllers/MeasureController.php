@@ -38,6 +38,11 @@ class MeasureController extends Controller
      */
     public function store(Request $request)
     {
+        
+        if (! $request->measures) {
+            return redirect()->back()->with('unsuccess','Kindly check tests for patient.');
+        }
+        
         DB::transaction(function () use ($request) {
             for ($i=0; $i < count($request->measures); $i++) { 
                 $patient_measures = new LabPatientMeasure();

@@ -49,7 +49,7 @@ class LabController extends Controller
     {
         DB::transaction(function() use($request){
             $obj = new stdClass;
-            $lab = [];
+            $service = new PatentAppointmentService();
 
             for ($i=0; $i < count($request->measure_id); $i++) { 
                 $measure_result = new LabMeasureResult();
@@ -60,7 +60,7 @@ class LabController extends Controller
                 $measure_result->save();
 
                 $measure_name = LabMeasure::where('id','=',$request->measure_id[$i])->first()->measure_name;
-                array_push($lab, $measure_name);
+                $service->service = $measure_name;
             }
 
             $appointment = Appointment::find($request->appointment_id);
@@ -81,12 +81,12 @@ class LabController extends Controller
                 }
             }
             $appointment->update();
-            $obj->lab = $lab;
 
-            $service = new PatentAppointmentService();
+            
             $service->patient_id = $request->patient_id;
             $service->appointment_id = $request->appointment_id;
-            $service->service = json_encode($obj);
+            $service->department = 'lab';
+           
             $service->save();
 
         });
@@ -247,11 +247,17 @@ class LabController extends Controller
         return view('lab.measure_list', compact('lab_measures'));
     }
 
+    public function addMeasurePage()
+    {
+        $title = "add test";
+        return view('lab.create_measures', compact('title'));
+    }
+
     public function saveMeasure(Request $request)
     {
         $lab_measure = new LabMeasure();
         $lab_measure->measure_name = $request->measure;
-        $lab_measure->unit_of_measurement = $request->unit_of_measurement;
+        $lab_measure->unit_of_measurement = $request->unit;
         if ($lab_measure->save()) {
             return redirect()->route('labMeasure')->with('success','Record stored successfully');
         }

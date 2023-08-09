@@ -194,7 +194,7 @@ class PatientController extends Controller
             $image = $request->regp_photo; // your base64 encoded
             $image = str_replace('data:image/png;base64,', '', $image);
             $image = str_replace(' ', '+', $image);
-            \Storage::disk('local')->put("public/" . $reg_num . ".png", base64_decode($image));
+            Storage::disk('local')->put("public/" . $reg_num . ".png", base64_decode($image));
 
             // Log Activity
             activity()->performedOn($patient)->withProperties(['Patient ID' => $reg_num])->log('Patient Registration Success');
@@ -398,18 +398,15 @@ class PatientController extends Controller
                 $pres_med->note = $medicine['note'];
                 $pres_med->exp_date = $med->exp_date;
                 $pres_med->save();
-            }
 
-            $obj = new stdClass;
-            $obj->diagnosis = $request->diagnosis;
-            //department from is where the patient is from
-            $obj->service = $request->department_from;
+            }
 
 
             $service = new PatentAppointmentService();
             $service->patient_id = $request->patient_id;
             $service->appointment_id = $request->appointment_id;
-            $service->service = json_encode($obj);
+            $service->service = $request->diagnosis;
+            $service->department = $request->department_from;
             $service->save();
             // Log Activity
             activity()->performedOn($presc)->withProperties(['Patient ID' => $request->patient_id, 'Doctor ID' => $user->id, 'Prescription ID' => $presc->id, 'Appointment ID' => $request->appointment_id, 'Medicines' => json_encode($request->medicines)])->log('Check Patient Success');

@@ -417,7 +417,7 @@ $outlet = '';
                     @endif
 
                     @if($user_type =='admin' || $user_type=='Lab')
-                        <li class="{{Active::checkRoute('searchLab')}}"><a href="{{route('labMeasure')}}"><i class="fa fa-flask" aria-hidden="true"></i><span> Lab Measure List</span></a></li>
+                        <li class="{{Active::checkRoute('labMeasure')}}"><a href="{{route('labMeasure')}}"><i class="fa-solid fa-list"></i><span class="ml-2"> Lab Tests List</span></a></li>
                     @endif
                     
                     @if(Auth::user()->user_type=='admin' || $user_type=='Doctor' || $user_type=="Doctor_consultation")
@@ -506,6 +506,7 @@ $outlet = '';
                     </li>
                     @endif
                     --}}
+                    @if (Auth::user()->user_type=="admin")
                     <li
                         class="treeview {{Active::checkRoute(['inpatientqueue', 'checkinpatientsearch', 'discharge_inpatient', 'dischaged'])}}">
                         <a href="#"><i class="fas fa-user-injured"></i><span> In Patient</span>
@@ -536,7 +537,7 @@ $outlet = '';
                                         Dischaged Patients</a></li>
                         </ul>
                     </li>
-
+                    @endif
                     
 
                     {{--

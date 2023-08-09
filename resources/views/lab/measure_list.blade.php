@@ -36,11 +36,18 @@
     </div>
 </div>
 
+<div class="row mb-3">
+    <div class="col-md-10"></div>
+    <div class="col-md-2" style="display: flex; flex-direction:row-reverse">
+        <a class="btn btn-success" style="width: 100%" href="{{route('labMeasureCreate')}}">Add Test</a>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-success">
             <div class="box-header">
-                <h3 class="box-title">Medicine Inventory</h3>
+                <h3 class="box-title">Lab Tests List</h3>
             </div>
             
             <div class="box-body">

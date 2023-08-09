@@ -157,6 +157,7 @@ Route::get('/searchlab', ['as' => 'searchLab', 'uses' => 'LabController@index'])
 Route::post('/searchpostlab', ['as' => 'searchLabPost', 'uses' => 'LabController@search']);
 Route::post('/addLab', ['as' => 'addLab', 'uses' => 'LabController@store']);
 Route::post('/commence-lab', ['as' => 'commencelab', 'uses' => 'LabController@startLab']);
+Route::get('/lab-measures-create', ['as' => 'labMeasureCreate', 'uses' => 'LabController@addMeasurePage']);
 Route::get('/lab-measures', ['as' => 'labMeasure', 'uses' => 'LabController@measureList']);
 Route::post('/save-measure', ['as' => 'saveMeasure', 'uses' => 'LabController@saveMeasure']);
 Route::get('/edit-measure/{id}', ['as' => 'measure_edit', 'uses' => 'LabController@editMeasure']);

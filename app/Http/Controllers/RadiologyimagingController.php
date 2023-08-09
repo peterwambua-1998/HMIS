@@ -45,12 +45,12 @@ class RadiologyimagingController extends Controller
     {
         DB::transaction(function() use($request){
             $radiology = new Radiologyimaging();
+            $service = new PatentAppointmentService();
 
-            $obj = new stdClass;
 
             if ($request->ct_Scan !== null) {
                 $radiology->ct_scan = $request->ct_Scan;
-                $obj->service = 'ct_scan';
+                $service->service = 'ct_scan';
             }
 
             if ($request->x_ray !== null) {
@@ -58,17 +58,17 @@ class RadiologyimagingController extends Controller
                 $radiology->reasion_for_exam = $request->reason_for_exam;
                 $radiology->technique = $request->technique;
                 $radiology->findings = $request->findings;
-                $obj->service = 'x_ray';
+                $service->service = 'x_ray';
             }
 
             if ($request->ultra_sound !== null) {
                 $radiology->ultra_sound = $request->ultra_sound;
-                $obj->service = 'ultra_sound';
+                $service->service = 'ultra_sound';
             }
 
             if ($request->mri !== null) {
                 $radiology->mri = $request->mri;
-                $obj->service = 'mri';
+                $service->service = 'mri';
             }
 
             /*
@@ -123,10 +123,9 @@ class RadiologyimagingController extends Controller
             }
             $appointment->update();
 
-            $service = new PatentAppointmentService();
             $service->patient_id = $request->patient_id;
             $service->appointment_id = $request->appointment_id;
-            $service->service = json_encode($obj);
+            $service->department = 'radiology and imaging';
             $service->save();
         });
 

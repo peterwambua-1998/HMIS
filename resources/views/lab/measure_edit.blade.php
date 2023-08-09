@@ -37,8 +37,8 @@
                             <input id="unit" type="text" class="form-control" name="unit" value="{{ $lab_measure->unit_of_measurement }}" required>
                         </div>
 
-                        <div>
-                            <button type="submit" class="pull-right btn btn-success">{{__('Update Measure')}}</button>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">{{__('Update Measure')}}</button>
                         </div>
                     </div>
                 </form>

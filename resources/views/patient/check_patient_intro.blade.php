@@ -23,6 +23,22 @@ $(document).ready(function () {
 
 <div class="row">
     <div class="col-md-12">
+        @if (Session::has('success'))
+            <div class="alert alert-success" role="alert" id="success">
+                {{Session::get('success')}}
+            </div>
+        @endif
+
+        @if (Session::has('unsuccess'))
+            <div class="alert alert-danger" role="alert" id="danger">
+                {{Session::get('unsuccess')}}
+            </div> 
+        @endif
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
         <div class="box box-success mt-5">
             <div class="box-header with-border">
                 <h3 class="box-title">{{__('Check Patient')}}</h3>

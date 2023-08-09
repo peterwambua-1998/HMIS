@@ -37,6 +37,7 @@ class MedicineController extends Controller
         try {
             $pres_med=Prescription_Medicine::find($request->medid);
             $med=Medicine::find($pres_med->medicine_id);
+            $prescription = Prescription::find($pres_med->prescription_id);
 
             $pres_med->issued="YES";
             $pres_med->qty = $request->qty;
@@ -47,6 +48,12 @@ class MedicineController extends Controller
             $med->save();
             $pres_med->save();
 
+            $service = new PatentAppointmentService();
+            $service->patient_id = $prescription->patient_id;
+            $service->appointment_id = $prescription->appointment_id;
+            $service->service = "$med->name_english,$request->qty";
+            $obj->department = 'pharmacy';
+            $service->save();
 
             /*
             $billing = new Billing();
@@ -98,11 +105,10 @@ class MedicineController extends Controller
             $obj = new stdClass;
             $obj->medicine = $medicines;
 
-            $service = new PatentAppointmentService();
-            $service->patient_id = $appointment->patient_id;
-            $service->appointment_id = $request->appointment_id;
-            $service->service = json_encode($obj);
-            $service->save();
+            foreach ($medicines as $key => $medicine) {
+                
+            }
+            
 
             
             //$appointment->doctor_id = $request->docname;

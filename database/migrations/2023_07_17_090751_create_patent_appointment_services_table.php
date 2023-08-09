@@ -18,6 +18,7 @@ class CreatePatentAppointmentServicesTable extends Migration
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('appointment_id');
             $table->string('service');
+            $table->string('department');
             $table->timestamps();
         });
     }

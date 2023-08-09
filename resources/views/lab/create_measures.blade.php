@@ -17,7 +17,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div style="padding:10px;margin-top:4.5vh !important" class="box box-primary">
+            <div style="padding:10px;margin-top:4.5vh !important" class="box box-success">
                 <div class="box-header with-border">
                     <h3 class="box-title">{{__('Add Lab Measure')}}</h3>
                 </div>
@@ -27,7 +27,7 @@
                     @csrf
                     <div class="box-body">
                         <div class="form-group">
-                            <label for="name">{{__('Measure')}} <span class="text-red">*</span></label>
+                            <label for="name">{{__('Test Name')}} <span class="text-red">*</span></label>
                             <input id="name" type="text" class="form-control" name="measure" value="{{ old('measure') }}" required autofocus>
                         </div>
 
@@ -36,8 +36,8 @@
                             <input id="unit" type="text" class="form-control" name="unit" value="{{ old('unit') }}" required>
                         </div>
 
-                        <div>
-                            <button type="submit" class="pull-right btn btn-primary">{{__('Add Measure')}}</button>
+                        <div class="text-center">
+                            <button type="submit" class=" btn btn-primary">{{__('Add Measure')}}</button>
                         </div>
                     </div>
                 </form>
