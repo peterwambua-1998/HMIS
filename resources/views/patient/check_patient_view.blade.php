@@ -108,7 +108,7 @@
                         </h3>
 
                         @foreach ($labs as $lab)
-                        <h4 style="font-size: 16px;">
+                        <h4 style="font-size: 14px;">
                             <span style="font-weight: bold">{{$lab->measure_name}}:</span> <span class="text-green">{{ $lab->result }} {{$lab->unit}}</span>
                         </h4>
                         @endforeach
@@ -120,52 +120,50 @@
                 @if ($imaging_radiology !== null)
                 <div style="border: 1px solid gray; padding: 10px">
 
-                    <h3 style="text-decoration: underline">
+                    <h3 style="font-size: 18px; margin-bottom: 2%">
                         Radiology/Imaging Results
                     </h3>
 
                     @if ($imaging_radiology->ct_scan !== null)
-                    <h4>
-                        CT Scan: <span class="text-green">{{ $imaging_radiology->ct_scan }}</span>
+                    <h4 style="font-size: 14px;">
+                        <span style="font-weight: bold">CT Scan:</span> {{ $imaging_radiology->ct_scan }}
                     </h4>
                     @endif
 
 
                     @if ($imaging_radiology->x_ray !== null)
-                    <h4>
-                        Findings: <span class="text-green">{{ $imaging_radiology->findings }}</span>
+                    <h4 style="font-size: 14px;">
+                        <span style="font-weight: bold">Findings:</span> {{ $imaging_radiology->findings }}
                        
                         
                     </h4>
-                    <h4>
-                        Technique: <span class="text-green">{{ $imaging_radiology->technique }}</span>
+                    <h4 style="font-size: 14px;">
+                        <span style="font-weight: bold">Technique:</span> {{ $imaging_radiology->technique }}
                     </h4>
-                    <h4>
-                        X-Ray Summary: <span class="text-green">{{ $imaging_radiology->x_ray }}</span>
+                    <h4 style="font-size: 14px;">
+                        <span style="font-weight: bold">X-Ray Summary:</span> {{ $imaging_radiology->x_ray }}
                     </h4>
                     @endif
 
                     @if ($imaging_radiology->ultra_sound !== null)
-                    <h4>
-                        Ultra Sound: <span class="text-green">{{ $imaging_radiology->ultra_sound }}</span>
+                    <h4 style="font-size: 14px;">
+                        <span style="font-weight: bold">Ultra Sound:</span> {{ $imaging_radiology->ultra_sound }}
                     </h4>
                     @endif
 
                     @if ($imaging_radiology->mri !== null)
-                    <h4>
-                        MRI: <span class="text-green">{{ $imaging_radiology->mri }}</span>
+                    <h4 style="font-size: 14px;">
+                        <span style="font-weight: bold">MRI:</span> {{ $imaging_radiology->mri }}
                     </h4>
                     @endif
 
                     @if ($imaging_radiology->pet_scan !== null)
-                    <h4>
-                        PET Scan: <span class="text-green">{{ $imaging_radiology->pet_scan }}</span>
+                    <h4 style="font-size: 14px;">
+                        <span style="font-weight: bold">PET Scan:</span> {{ $imaging_radiology->pet_scan }}
                     </h4>
                     @endif
                     <br>
                     
-                    <button class="btn btn-success" onclick="showImg()">Click To View Image</button>
-                    <img src="{{Storage::url($imaging_radiology->img_url)}}" id="image_radiology" alt="img" style="display: none">
                 </div>
                 @endif
 
@@ -198,15 +196,15 @@
                 @endif
                 
                 <div class="row mt-2 mb-0 pb-0">
-                    <div class="col-md-3 mt-2 mb-0 pb-0">
+                    <div class="col-md-3 mt-2 mb-0 pb-0 ">
                         <button onclick="window.open('{{route('patientHistory',$pid)}}','myWin','scrollbars=yes,width=720,height=690,location=no').focus();" class="btn btn-info">
                             View Patient History
                         </button>
                     </div>
-                    <div class="col-md-3 mt-2 mb-0 pb-0">
-                        <button onclick="window.open('{{route('patientHistory',$pid)}}','myWin','scrollbars=yes,width=720,height=690,location=no').focus();" class="btn btn-info">
+                    <div class="col-md-3 mt-2 mb-0 pb-0" style="margin-left: 10%">
+                        <a href="{{route('appointmentReport', Crypt::encrypt($appID))}}" class="btn btn-info">
                             Appoinment Report
-                        </button>
+                        </a>
                     </div>
                    
                 </div>

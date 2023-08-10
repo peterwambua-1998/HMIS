@@ -134,22 +134,10 @@
                                         <option @if($doctor->id == $doc->id) selected  @endif value="{{ $doc->id }}">{{ $doc->name }} - {{ substr($doc->user_type, 7) }}</option>
                                         
                                     @endforeach
-                                    
-                                    
-                                    
                                 </select>
                             </div>
                         </div>
                     </div>
-
-                    
-
-                    
-                    
-
-                    
-                       
-                    
                 
                     <br>
                     <input type="hidden" name="app_id" value="{{ $appointment->id }}">

@@ -74,6 +74,8 @@ Route::post('/validateAppNum', ['as' => 'validateAppNum', 'uses' => 'PatientCont
 Route::post('/checkpatient', ['as' => 'checkPatient', 'uses' => 'PatientController@checkPatient']);
 Route::post('/checksave', ['as' => 'checkSave', 'uses' => 'PatientController@checkPatientSave']);
 Route::post('/addclinic', ['as' => 'addToClinic', 'uses' => 'PatientController@addToClinic']);
+Route::get('/appointment-report/{id}',['as' => 'appointmentReport', 'uses' => 'AppointmentReportController@report']);
+
 
 // In patient Routes
 Route::post('/markinpatient', ['as' => 'markInPatient', 'uses' => 'PatientController@markInPatient'])->middleware('auth', 'doctor');

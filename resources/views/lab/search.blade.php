@@ -21,8 +21,8 @@
 
     #keyword {
         margin-top: 50px;
-        height: 50px;
-        font-size: 20px; 
+        height: 40px;
+        font-size: 16px; 
     }
 
     .btn-default {
@@ -31,7 +31,7 @@
     }
 
     label {
-        font-size: 16px; 
+        font-size: 14px; 
     }
 </style>
 
@@ -49,12 +49,12 @@
         @endif
         <div class="box box-success">
             <div class="box-header with-border">
-                <h3 class="box-title">{{__('Lab')}} <small class="ml-2" style="font-weight: bold">(Check queue for patient number)</small></h3>
+                <h3 class="box-title">{{__('Lab')}}</h3>
             </div>
             
             <div class="box-body">
                 <div class="pl-5 pr-5 pb-5">
-                    <h3>{{__('Enter Patient Name To Begin Lab Test')}}</h3>
+                    <h4>{{__('Enter Patient Name')}}</h4>
                     <label class="mr-2" style="display: none">
                                 <input onchange="changeFunc('Patient Number');" style="display:inline-block" checked type="radio"
                                     name="cat" id="cat" value="patient_id">
@@ -123,85 +123,97 @@
             success: function (response) {
                 console.log(response);
                 $('#patient-append').children().remove();
-                for (let i = 0; i < response.length; i++) {
-                        let template = `
-                        <div class="col-md-12">
-                            <div class="box box-successbox box-success mt-5">
-                                <div class="box-body pl-5 pr-5 pb-5">
-                                    <form action="{{route('commencelab')}}" method="post">
-                                        @csrf
-                                        <input type="hidden" name="patient_id" value="${response[i].id}">
-                                        <div class="form-group">
-                                            <label for="inputEmail3" class="col-sm-2 control-label">{{__('Full Name')}}</label>
-                                            <div class="col-sm-10">
-                                                <input readonly value="${response[i].name}" type="text" required class="form-control"
-                                                    name="reg_pname" placeholder="Enter Patient Full Name">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="inputEmail3" class="col-sm-2 control-label">{{__('ID/PP/Military No')}}</label>
-                                            <div class="col-sm-10">
-                                                <input readonly value="${response[i].nic}" type="text" required class="form-control"
-                                                    name="reg_pnic" placeholder="National Identity Card Number">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="inputPassword3" class="col-sm-2 control-label">{{__('Address')}}</label>
-                                            <div class="col-sm-10">
-                                                <input readonly type="text" value="${response[i].address}" required class="form-control"
-                                                    name="reg_paddress" placeholder="Enter Patient Address ">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="inputPassword3" class="col-sm-2 control-label">{{__('Telephone')}}</label>
-                                            <div class="col-sm-10">
-                                                <input readonly value="${response[i].telephone}" type="tel" class="form-control"
-                                                    name="reg_ptel" placeholder="Patient Telephone Number">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="inputPassword3" class="col-sm-2 control-label">{{__('Occupation')}}</label>
-                                            <div class="col-sm-10">
-                                                <input readonly value="${response[i].occupation}" type="text" required class="form-control"
-                                                    name="reg_poccupation" placeholder="Enter Patient Occupation ">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">{{__('Gender')}}</label>
-                                            <div class="col-sm-10">
-                                                <input readonly value="${response[i].sex}" type="text" required class="form-control"
-                                                    name="reg_poccupation" placeholder="Enter Patient Occupation ">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">{{__('DOB')}}</label>
-                                            <div class="col-sm-10">
-                                                <div class="input-group date">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <input readonly value="${response[i].bod}" type="text" class="form-control pull-right"
-                                                        name="reg_pbd" placeholder="Birthday">
-                                                    <input readonly value="${response[i].id}" type="text" class="form-control pull-right"
-                                                        name="reg_pid" style="display:none">
+                if (response.length > 0) {
+                    for (let i = 0; i < response.length; i++) {
+                            let template = `
+                            <div class="col-md-12">
+                                <div class="box box-successbox box-success mt-5">
+                                    <div class="box-body pl-5 pr-5 pb-5">
+                                        <form action="{{route('commencelab')}}" method="post">
+                                            @csrf
+                                            <input type="hidden" name="patient_id" value="${response[i].id}">
+                                            <div class="form-group">
+                                                <label for="inputEmail3" class="col-sm-2 control-label">{{__('Full Name')}}</label>
+                                                <div class="col-sm-10">
+                                                    <input readonly value="${response[i].name}" type="text" required class="form-control"
+                                                        name="reg_pname" placeholder="Enter Patient Full Name">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-2">
-                                                <button type="submit" class="btn bg-green mt-3">Check</button>
+                                            <div class="form-group">
+                                                <label for="inputEmail3" class="col-sm-2 control-label">{{__('ID/PP/Military No')}}</label>
+                                                <div class="col-sm-10">
+                                                    <input readonly value="${response[i].nic}" type="text" required class="form-control"
+                                                        name="reg_pnic" placeholder="National Identity Card Number">
+                                                </div>
                                             </div>
-                                            <div class="col-md-5"></div>
-                                            <div class="col-md-5"></div>
-                                        </div>
-                                    </form>
+                                            <div class="form-group">
+                                                <label for="inputPassword3" class="col-sm-2 control-label">{{__('Address')}}</label>
+                                                <div class="col-sm-10">
+                                                    <input readonly type="text" value="${response[i].address}" required class="form-control"
+                                                        name="reg_paddress" placeholder="Enter Patient Address ">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="inputPassword3" class="col-sm-2 control-label">{{__('Telephone')}}</label>
+                                                <div class="col-sm-10">
+                                                    <input readonly value="${response[i].contactnumber}" type="tel" class="form-control"
+                                                        name="reg_ptel" placeholder="Patient Telephone Number">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="inputPassword3" class="col-sm-2 control-label">{{__('Occupation')}}</label>
+                                                <div class="col-sm-10">
+                                                    <input readonly value="${response[i].occupation}" type="text" required class="form-control"
+                                                        name="reg_poccupation" placeholder="Enter Patient Occupation ">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">{{__('Gender')}}</label>
+                                                <div class="col-sm-10">
+                                                    <input readonly value="${response[i].sex}" type="text" required class="form-control"
+                                                        name="reg_poccupation" placeholder="Enter Patient Occupation ">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">{{__('DOB')}}</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input readonly value="${response[i].bod}" type="text" class="form-control pull-right"
+                                                            name="reg_pbd" placeholder="Birthday">
+                                                        <input readonly value="${response[i].id}" type="text" class="form-control pull-right"
+                                                            name="reg_pid" style="display:none">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-2">
+                                                    <button type="submit" class="btn bg-green mt-3">Check</button>
+                                                </div>
+                                                <div class="col-md-5"></div>
+                                                <div class="col-md-5"></div>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        `; 
+                            `; 
 
-                        $('#patient-append').append(template);
+                            $('#patient-append').append(template);
+                    }
+                } else {
+                    let errorTemplate = `
+                        <div class="col-md-12">
+                            <div style="background: #fcdce1; color: #f26982; padding: 2%; border; font-size: 14px; border-radius: 0.375rem;">
+                                <p><span class="mr-2"><i class="fa-solid fa-triangle-exclamation"></i></span> <span>Kindly try again, search returned zero results</span></p>    
+                            </div>    
+                        </div>
+                    `;
+
+                    $('#patient-append').append(errorTemplate);
                 }
             }
         })

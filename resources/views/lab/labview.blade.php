@@ -17,7 +17,7 @@
 
 <div class="row" id="createchannel4">
     <div class="col-xs-12">
-        <div class="box box-primary">
+        <div class="box box-success">
             <div class="box-header">
                 <h3 class="box-title">{{__('Patient Details')}}</h3>
             </div>
@@ -38,7 +38,7 @@
     <!-- /.col -->
 
     <div class="col-xs-12" id="createchannel4">
-        <div class="box box-info">
+        <div class="box box-success">
             <div class="box-header">
                 <h3 class="box-title">{{__('Lab Test Results Form')}}</h3>
             </div>
@@ -76,7 +76,7 @@
     </div>
 
     <div class="col-xs-12">
-        <div class="box box-primary">
+        <div class="box box-success">
             <div class="box-header">
                 <h3 class="box-title">{{__('Lab History')}}</h3>
             </div>
@@ -87,7 +87,7 @@
                         @foreach ($lab_history as $history)
                         <div id="presc" class="box box-success collapsed-box">
                             <div class="box-header with-border">
-                                <h3 class="box-title">Visit On {{$history->created_at->toFormattedDateString()}}</h3>
+                                <h5 class="box-title" style="font-size: 14px;">Visit On {{$history->created_at->toFormattedDateString()}}</h5>
                 
                                 <div class="box-tools pull-right">
                                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
@@ -99,11 +99,11 @@
                                         <div class="col-md-4">
                                             <?php $ms = App\LabMeasure::where('id','=', $result->measure_id)->first(); ?>
                                             <h5 style="font-weight: bold">{{$ms->measure_name}}</h5>
-                                            <h4><span class="text-success">Result</span>: {{$result->result}} ({{$ms->unit_of_measurement}})</h4>
+                                            <h5><span class="text-success">Result</span>: {{$result->result}} ({{$ms->unit_of_measurement}})</h5>
                                         </div>
                                     @endforeach
                                 @else
-                                    <h4>Did not visit lab</h4>
+                                    <h5>Did not visit lab</h5>
                                 @endif
                             </div>
                         </div>
