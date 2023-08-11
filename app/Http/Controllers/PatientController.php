@@ -258,8 +258,6 @@ class PatientController extends Controller
 
     public function checkPatient(Request $request)
     {
-
-        //dd($request->pid);
         //to get the latest appointment number for the day
         //apa kuna where clause where('created_at', '>=', date('Y-m-d') . ' 00:00:00')->
         $appointment = Appointment::where('number', $request->appNum)->where('patient_id', $request->pid)->get()->last();

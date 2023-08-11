@@ -18,6 +18,7 @@ class AppointmentReportController extends Controller
 {
     public function report($id)  
     {
+     
         $appointment = Appointment::find(Crypt::decrypt($id));
         $patient = Patients::find($appointment->patient_id);
         $triage = Triage::where('patient_id', '=', $patient->id)->where('appointment_id', '=', $appointment->id)->get()->last();
@@ -33,19 +34,21 @@ class AppointmentReportController extends Controller
         $lab_requests_final = new Collection();
         $lab_note = null;
         foreach ($lab_requests as $key => $measure) {
-            if ($measure->measure_id !== 0) {
+            if ($measure->measure_id !== null) {
                 $lab_measure = LabMeasure::where('id','=', $measure->measure_id)->first(['id','measure_name']);
+                $lab_requests_final->push($lab_measure);
             }
 
-            if ($measure->measure_id == 0 && $measure->note) {
+            if (!$measure->measure_id && $measure->note) {
                 $lab_note = $measure->note;
             }
         }
         $imaging_radiology = Radiologyimaging::where('patient_id', '=', $patient->id)->where('appointment_id', '=', $appointment->id)->get()->last();
         $lab_measures = LabMeasure::all();
+        ///dd($imaging_radiology);
         $title = 'Appointment report';
         return view('patient.appointment_report', compact(
-            'appointment', 'patient', 'triage', 'labs', 'lab_measures','imaging_radiology','title'
+            'appointment', 'patient', 'triage', 'labs', 'lab_measures','imaging_radiology','title','lab_note','lab_requests_final'
         ));
     }
 }

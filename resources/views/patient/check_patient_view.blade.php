@@ -540,7 +540,7 @@
                             Radiology</button>
                         <br>
                         @if (Auth::user()->user_type != 'doctor_physiotherapy')
-                        <button style="width: fit-content;font-size: 14px;" class="btn btn-block btn-success btn-lg text-center" data-toggle="modal" data-target="#physiotherapy">
+                        <button style="font-size: 14px;" class="btn btn-block btn-success btn-lg text-center" data-toggle="modal" data-target="#physiotherapy">
                             Physiotherapy</button>
                         @endif
                         

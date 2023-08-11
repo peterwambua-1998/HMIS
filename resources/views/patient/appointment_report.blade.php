@@ -25,19 +25,36 @@
     }
 </style>
 
+<section class="content-header">
+    <div style="display: flex; flex-direction:row-reverse; gap: 1%">
+        <form action="{{route('checkPatient')}}" method="post">
+            @csrf
+            <input type="hidden" name="appNum" value="{{$appointment->number}}">
+            <input type="hidden" name="pid" value="{{$patient->id}}">
+            <button type="submit" class="btn btn-warning">Back</button>
+        </form>
+        <button type="submit" class="btn btn-primary">Print</button>
+    </div>
+</section>
+
 <div class="row" >
     <div class="col-md-12" style="padding: 10px;">
         <!-- card -->
         <div class="card">
             <div class="card-body">
                 <!-- logo and heading -->
-                <div class="row">
-                    <div class="col-md-1">
-                        <img src="./WKMHLogo.png" alt="logo" class="img-fluid">
+                <div class="row" style="padding-top: 2%; padding-left: 2%; padding-right: 2%;">
+                    <div class="col-md-12" style="background: #FAF9F9;border: 1px solid rgba(0,0,0,.125);">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <img src="./WKMHLogo.png" alt="logo" class="img-fluid">
+                            </div>
+                            <div class="col-md-11">
+                                <h5 style="padding-left: 40%; padding-top: 2%; font-weight: bold">APPOINTMENT REPORT</h5>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-11">
-                        <h5 style="padding-left: 40%; padding-top: 2%;">APPOINTMENT REPORT</h5>
-                    </div>
+                    
                 </div>
                 <hr>
                 <!-- patient info and appointment visits -->
@@ -45,26 +62,42 @@
                     <div style="background-color: #FAF9F9; border: 1px solid rgba(0,0,0,.125); padding-top: 2%; padding-left: 2%; padding-right: 2%;">
                         <h6>Patient Information</h6>
                         <div style="line-height: 15px; margin-top:5%;">
-                            <p><span style="font-weight: 500;">Name:</span> Peter Wambua</p>
-                            <p><span style="font-weight: 500;">Phone:</span> 0715100539</p>
-                            <p><span style="font-weight: 500;">Age:</span> 25</p>
+                            <p><span style="font-weight: 500;">Name:</span> {{$patient->name}}</p>
+                            <p><span style="font-weight: 500;">Phone:</span> {{$patient->contactnumber}}</p>
+                            <p><span style="font-weight: 500;">Age:</span> {{$patient->bod}}</p>
                         </div>
                     </div>
                     <div style="background-color: #FAF9F9; border: 1px solid rgba(0,0,0,.125); padding-top: 2%; padding-left: 2%; padding-right: 2%;">
-                        <h6>Patient Information</h6>
+                        <h6>Appoinment Visits</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <ul>
-                                    <li>peter</li>
-                                    <li>peter</li>
-                                    <li>peter</li>
+                                   <?php
+                                        $app_doc = $appointment->doctor_id;
+                                        $doc = App\User::find($app_doc);
+                                        if ($doc->user_type == "doctor_dentist") {
+                                            $department = "Dentist";
+                                        }
+
+                                        if ($doc->user_type == "doctor_consultation") {
+                                            $department = "Consultation";
+                                        }
+                                   ?>
+                                    @if ($triage)
+                                        <li>Triage</li>
+                                    @endif
+                                    @if ($labs->isNotEmpty())
+                                        <li>Lab</li>
+                                    @endif
+                                    <li>{{$department}}</li>
                                 </ul>
                             </div>
                             <div class="col-md-6">
                                 <ul>
-                                    <li>peter</li>
-                                    <li>peter</li>
-                                    <li>peter</li>
+                                    
+                                    @if ($imaging_radiology)
+                                        <li>Radiology and Imaging</li>
+                                    @endif
                                 </ul>
                             </div>
                         </div>
@@ -93,13 +126,14 @@
                 <!-- patient info and appointment visits -->
 
                 <!-- lab results -->
+                @if ($labs->isNotEmpty())
                 <div class="mb-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2%;">
                     <div style="background-color: #FAF9F9; border: 1px solid rgba(0,0,0,.125); padding-top: 7%; padding-left: 7%; padding-right: 7%;">
                             <h6>Lab Test Requested</h6>
                             <div class="pt-2" style="line-height: 20px; margin-top:2%; display: flex; flex-wrap: wrap; flex-direction: column; height: 150px;">
-                                @foreach ($labs as $lab)
+                                @foreach ($lab_requests_final as $final)
                                 <p>
-                                    <span style="font-weight: 500">{{$lab->measure_name}}:</span> <span class="text-green">{{ $lab->result }} {{$lab->unit}}</span>
+                                    {{$final->measure_name}}
                                 </p>
                                 @endforeach
                             </div>
@@ -117,12 +151,16 @@
                     <div style="background-color: #FAF9F9; border: 1px solid rgba(0,0,0,.125); padding-top: 7%; padding-left: 7%; padding-right: 7%;">
                             <h6>Lab Notes</h6>
                             <div class="pt-2" style="line-height: 15px; margin-top:2%;">
-                                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt autem sed porro eius sit mollitia alias accusantium soluta beatae id, accusamus magnam dolores quam. Vero unde sint perspiciatis cum nobis?</p>
+                                @if ($lab_note)
+                                    <p>{{$lab_note}}</p>
+                                @else
+                                    <p>Not provided.</p>
+                                @endif
                             </div>
                     </div>
                 </div>
                 <!-- lab results -->
-
+                @endif
                 <!-- radiology results -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2%;">
                     <div style="background-color: #FAF9F9; border: 1px solid rgba(0,0,0,.125); padding-top: 7%; padding-left: 7%; padding-right: 7%;">
