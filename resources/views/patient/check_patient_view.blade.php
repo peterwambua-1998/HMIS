@@ -520,7 +520,9 @@
                         <button style="font-size: 14px;" class="btn btn-block btn-success btn-lg text-center" data-toggle="modal" data-target="#physiotherapy">
                             Physiotherapy</button>
                         @endif
-                        
+                        <br>
+                        <button style="font-size: 14px;" class="btn btn-block btn-success btn-lg text-center" data-toggle="modal" data-target="#surgery">
+                            Surgery</button>
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -699,6 +701,55 @@
             <input type="hidden" name="patient_id" value="{{ $patient->id }}">
             <input type="hidden" name="app_id" value="{{$appID}}">
             <input type="hidden" name="sendto" value="radiology and imaging">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </form>
+    </div>
+</div>
+
+<div class="modal fade" id="surgery" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <form action="{{route('storeSurgery')}}" method="POST">
+        @csrf
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel" style="font-weight: bold; font-size: 14px;">Surgery Request Form</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th style="width: 10%">Checkbox</th>
+                        <th>Service Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($surgery_measures as $item)
+                    <tr>
+                        <td><input class="form-check-input" type="checkbox" value="{{$item->id}}" id="defaultCheck1" name="measures[]"></td>
+                        <td>{{$item->name}}</td>
+                        <td>{{$item->description}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <br>
+           
+            <label for="">Doctor Note</label>
+                    <textarea class="form-control" name="doc_note" rows="3" cols="100"
+                        placeholder="Add Note"></textarea>
+
+            <input type="hidden" name="patient_id" value="{{ $patient->id }}">
+            <input type="hidden" name="app_id" value="{{$appID}}">
+            <input type="hidden" name="sendto" value="surgery">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

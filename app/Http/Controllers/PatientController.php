@@ -20,6 +20,7 @@ use App\Prescription_Medicine;
 use App\Radiologyimaging;
 use App\Radiologymeasure;
 use App\RadiologyService;
+use App\SurgaryService;
 use App\Theatre;
 use App\Triage;
 use App\Ward;
@@ -301,6 +302,7 @@ class PatientController extends Controller
         $physios = User::where('user_type','=', 'doctor_physiotherapy')->get();
         $lab_measures = LabMeasure::all();
         $radiology_measures = RadiologyService::all();
+        $surgery_measures = SurgaryService::all();
         return view('patient.check_patient_view', [
             'title' => "Check Patient",
             'lab_measures' => $lab_measures,
@@ -328,7 +330,8 @@ class PatientController extends Controller
             'select_doctors' => $select_doctors,
             'dentists' => $dentists,
             'physios' => $physios,
-            'radiology_measures' => $radiology_measures
+            'radiology_measures' => $radiology_measures,
+            'surgery_measures' => $surgery_measures
         ]);
     }
 

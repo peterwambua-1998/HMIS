@@ -454,6 +454,19 @@ $outlet = '';
                         </a>
                     </li>
                     @endif
+
+                    @if (Auth::user()->user_type == "doctor_radiology_imaging"  || Auth::user()->user_type=="admin")
+                    <li class="{{Active::checkRoute('surgery-services')}}">
+                        <a href="{{route('surgery-services.index')}}">
+                            <i class="fa fa-image"></i><span>Services</span>
+                        </a>
+                    </li>
+                    <li class="{{Active::checkRoute('surgerySearchPatient')}}">
+                        <a href="{{route('surgerySearchPatient')}}">
+                            <i class="fa fa-image"></i><span>Surgery</span>
+                        </a>
+                    </li>
+                    @endif
                    
                     @if(Auth::user()->user_type=='pharmacist' || Auth::user()->user_type=='admin')
                     {{--Issue Medicine--}}

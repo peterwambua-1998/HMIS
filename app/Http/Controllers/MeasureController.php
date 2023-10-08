@@ -6,6 +6,7 @@ use App\Appointment;
 use App\LabPatientMeasure;
 use App\Measure;
 use App\Radiologymeasure;
+use App\Surgery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -105,5 +106,43 @@ class MeasureController extends Controller
         });
 
         return redirect()->route('create_channel_view')->with('success', 'Patient sent to radiology');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     * Stores patient radiology measures
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeSurgery(Request $request)
+    {
+        if (! $request->measures) {
+            return redirect()->back()->with('unsuccess','Kindly check tests for patient.');
+        }
+
+        DB::transaction(function () use ($request) {
+            for ($i=0; $i < count($request->measures); $i++) { 
+                $patient_measures = new Surgery();
+                $patient_measures->patient_id = $request->patient_id;
+                $patient_measures->appointment_id = $request->app_id;
+                $patient_measures->measure_id = $request->measures[$i];
+                $patient_measures->save();
+            }
+            
+            if ($request->doc_note) {
+                $patient_measures = new Surgery();
+                $patient_measures->patient_id = $request->patient_id;
+                $patient_measures->appointment_id = $request->app_id;
+                $patient_measures->note = $request->doc_note;
+                $patient_measures->save();
+            }
+
+            $appointment = Appointment::find($request->app_id);
+            $appointment->department = $request->sendto;
+            $appointment->update();
+        });
+
+        return redirect()->route('create_channel_view')->with('success', 'Patient sent to surgery');
     }
 }

@@ -267,3 +267,11 @@ Route::post('/consultation-sendto-physiotherapy', ['as' => 'consultation-sendto-
 //excel medicine
 Route::get('/medicine-excel-view', ['as' => 'medexcelview', 'uses' => "MedicineExcelController@index"]);
 Route::post('/medicine-excel-store', ['as' => 'medexcelstore', 'uses' => "MedicineExcelController@store"]);
+
+//Surgery 
+Route::resource('surgery-services', 'SurgaryServiceController');
+Route::post('surgery-measures', ['as' => 'storeSurgery', 'uses' => "MeasureController@storeSurgery"]);
+Route::get('/suregry-search-patient',['as' => 'surgerySearchPatient', 'uses' => 'SurgeryController@index']);
+Route::post('/suregry-search-patient-get',['as' => 'surgerySearchPatientGet', 'uses' => 'SurgeryController@search']);
+Route::post('/suregry',['as' => 'surgeryStart', 'uses' => 'SurgeryController@startSurgery']);
+Route::post('/suregry-report-store',['as' => 'surgeryStore', 'uses' => 'SurgeryController@store']);

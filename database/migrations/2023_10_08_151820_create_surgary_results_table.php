@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSurgeriesTable extends Migration
+class CreateSurgaryResultsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateSurgeriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('surgeries', function (Blueprint $table) {
+        Schema::create('surgary_results', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('appointment_id');
-            $table->unsignedBigInteger('measure_id')->nullable();
-            $table->string('department')->nullable();
-            $table->boolean('paid')->default(0);
-            $table->string('note')->nullable();
+            $table->unsignedBigInteger('patient_id');
+            $table->unsignedBigInteger('measure_id');
+            $table->longText('result');
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ class CreateSurgeriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('surgeries');
+        Schema::dropIfExists('surgary_results');
     }
 }
