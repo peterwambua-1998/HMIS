@@ -27,49 +27,18 @@
                     <p>Patient Telephone: <span style="font-weight: bold">{{ $search_result->telephone }}</span></p>
                     <p>DOB: <span style="font-weight: bold">{{ $search_result->bod }}</span>
                     <p>Current Doctor: <span style="font-weight: bold">{{ $docs->name }}</span></p>
-                    <div>
-                        @if ($measure)
-                            @if ($measure->measrure_1 !== null)
+                        @foreach ($measures as $item)
+                            @if ($item->measure_id)
                             <div style="display: flex">
                                 <p>Test Requested:</p>
-                                <p style="font-weight: bold">{{$measure->measrure_1 }}</p>
+                                <p style="font-weight: bold">{{App\RadiologyService::where('id',$item->measure_id)->first()->name}}</p>
                             </div>
+                            <p>Available view: <span style="font-weight: bold">{{App\RadiologyService::where('id',$item->measure_id)->first()->view}}</span></p>
                             @endif
 
-                            @if ($measure->measrure_2 !== null)
-                            <div style="display: flex">
-                            <p>Test Requested:</p>
-                            <p style="font-weight: bold">{{$measure->measrure_2 }}</p>
-                            </div>
-                            @endif
-
-                            @if ($measure->measrure_3 !== null)
-                            <div style="display: flex">
-                            <p>Test Requested:</p>
-                            <p style="font-weight: bold">{{$measure->measrure_3 }}</p>
-                            </div>
-                            @endif
-
-                            @if ($measure->measrure_4 !== null)
-                            <div style="display: flex">
-                            <p>Test Requested:</p>
-                            <p style="font-weight: bold">{{$measure->measrure_4 }}</p>
-                            </div>
-                            @endif
-
-                            @if ($measure->measrure_5 !== null)
-                            <div style="display: flex">
-                            <p>Test Requested:</p>
-                            <p style="font-weight: bold">{{$measure->measrure_5 }}</p>
-                            </div>
-                            @endif
-                        </div>
-                        <div>
-                            <p>Doctors Note: <span style="font-weight: bold">{{$measure->doc_note}}</span></p>
-                        </div>
-                        @endif
-                       
+                        @endforeach
                     
+                    <p>Doctors Note: <span style="font-weight: bold">{{$note}}</span></p>
                 </div>
             </div>
             <!-- /.box-body -->
@@ -81,97 +50,52 @@
             <div class="box-header">
                 <h3 class="box-title">{{__('Radiology and Imaging Results Form:')}}</h3>
             </div>
-            @if ($measure)
+            @if($measures->count() > 0)
             <div class="box-body">
                 <div style="border: 1px solid gray; padding: 20px">
                     
                     <form class="form-horizontal" action="{{route('addRadiology')}}" method="POST">
                         @csrf
+                        @foreach ($measures as $item)
                         <div class="row">
-
                             <div class="col-md-4">
                                 <div style="display: grid; grid-template-rows: 14% 1fr">
                                     <label for="">Reason for exam</label>
-                                    <textarea name="reason_for_exam" id="" cols="30" rows="5" class="form-control" style="text-align: left">
+                                    <textarea name="reason_for_exam[]" id="" cols="30" rows="5" class="form-control" style="text-align: left">
 
                                     </textarea>
                                 </div>
-                                
                             </div>
 
                             <div class="col-md-4">
                                 <div style="display: grid; grid-template-rows: 14% 1fr">
                                     <label for="">Technique</label>
                                     {{-- This section describes how the exam was done and whether contrast was injected in your vein --}}
-                                    <textarea name="technique" id="" cols="30" rows="5" class="form-control">
+                                    <textarea name="technique[]" id="" cols="30" rows="5" class="form-control">
 
                                     </textarea>
                                 </div>
-                                
                             </div>
-
                             <div class="col-md-4">
                                 <div style="display: grid; grid-template-rows: 14% 1fr">
                                     <label for="">Findings</label>
                                     {{-- This section describes how the exam was done and whether contrast was injected in your vein --}}
-                                    <textarea name="findings" id="" cols="30" rows="5" class="form-control">
+                                    <textarea name="findings[]" id="" cols="30" rows="5" class="form-control">
 
                                     </textarea>
                                 </div>
-                                
                             </div>
-                            @if ($measure->measrure_1 !== null)
-                            <div class="col-md-12">
-                                <label for="">Enter CT Scan Results</label>
-                                <input class="form-control" type="text" placeholder="Enter CT Scan Results" name="ct_Scan"><br>
-                            </div>
-
-                            @endif
-                        
                         </div>
 
-                        <div class="row">
-                            @if ($measure->measrure_2 !== null)
-
-
-
+                        <div class="row mt-5">
+                            
                             <div class="col-md-12">
                                 <div style="display: grid; grid-template-rows: 14% 1fr">
-                                <label for="">Enter X-Ray Summary</label>
-                                <textarea name="x_ray" id="" cols="30" rows="10" class="form-control"></textarea>
+                                <label for="">Enter Results For Service: {{App\RadiologyService::where('id',$item->measure_id)->first()->name}}</label>
+                                <textarea name="measures_results[]" id="" cols="30" rows="10" class="form-control"></textarea>
                                 </div>
                             </div>
-
-                            @endif
-                        </div>
-
-
-                        <div class="row">
-                            @if ($measure->measrure_3 !== null)
-                            <div class="col-md-12">
-                                <label for="">Enter Ultra Sound Results</label>
-                                <input class="form-control" type="text" placeholder="Enter Ultra Sound Results" name="ultra_sound" ><br>
-                            </div>
-
-                            @endif
-                            @if ($measure->measrure_4 !== null)
-                            <div class="col-md-12">
-                                <label for="">Enter MRI Results</label>
-                                <input class="form-control" type="text" placeholder="Enter MRI Results" name="mri" ><br>
-                            </div>
-
-                            @endif
-                        </div>
-
-
-                        <div class="row">
-                            @if ($measure->measrure_5 !== null)
-                            <div class="col-md-12">
-                                <label for="">Enter PET Scan Results</label>
-                                <input class="form-control" type="text" placeholder="Enter PET Scan Results" name="pet_scan" ><br>
-                            </div>
-
-                            @endif
+                            <input type="hidden" name="measure_id[]" value="{{$item->measure_id}}">
                         </div>
 
                         <div class="row">
@@ -180,10 +104,10 @@
                                 <input type="file" class="custom-file-input" name="image_radiology" id="image">
                             </div>
                         </div>
-                        
 
                         <br>
                         
+                        @endforeach
                         
                         <input type="hidden" value="2000" name="amount" />
                         <input type="hidden" value="{{ $appointment->id }}" name="appointment_id" />

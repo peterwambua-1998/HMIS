@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Appointment;
 use App\LabPatientMeasure;
 use App\Measure;
+use App\Radiologymeasure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,13 +33,13 @@ class MeasureController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * Stores lab measures
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        
         if (! $request->measures) {
             return redirect()->back()->with('unsuccess','Kindly check tests for patient.');
         }
@@ -65,51 +66,44 @@ class MeasureController extends Controller
             $appointment->update();
         });
 
-        return redirect()->route('create_channel_view');
+        return redirect()->route('create_channel_view')->with('success', 'Patient sent to lab');
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Measure  $measure
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Measure $measure)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Measure  $measure
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Measure $measure)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Store a newly created resource in storage.
+     * Stores patient radiology measures
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Measure  $measure
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Measure $measure)
+    public function storeRadiology(Request $request)
     {
-        //
-    }
+        if (! $request->measures) {
+            return redirect()->back()->with('unsuccess','Kindly check tests for patient.');
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Measure  $measure
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Measure $measure)
-    {
-        //
+        DB::transaction(function () use ($request) {
+            for ($i=0; $i < count($request->measures); $i++) { 
+                $patient_measures = new Radiologymeasure();
+                $patient_measures->patient_id = $request->patient_id;
+                $patient_measures->appointment_id = $request->app_id;
+                $patient_measures->measure_id = $request->measures[$i];
+                $patient_measures->save();
+            }
+            
+            if ($request->doc_note) {
+                $patient_measures = new Radiologymeasure();
+                $patient_measures->patient_id = $request->patient_id;
+                $patient_measures->appointment_id = $request->app_id;
+                $patient_measures->note = $request->doc_note;
+                $patient_measures->save();
+            }
+
+            $appointment = Appointment::find($request->app_id);
+            $appointment->department = $request->sendto;
+            $appointment->update();
+        });
+
+        return redirect()->route('create_channel_view')->with('success', 'Patient sent to radiology');
     }
 }

@@ -18,6 +18,7 @@ class CreateLabPatientMeasuresTable extends Migration
             $table->unsignedBigInteger('measure_id')->nullable();
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('appointment_id');
+            $table->boolean('paid')->default(0);
             $table->string('note')->nullable();
             $table->timestamps();
         });

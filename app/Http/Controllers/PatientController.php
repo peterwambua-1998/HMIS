@@ -18,6 +18,8 @@ use App\Patients;
 use App\Prescription;
 use App\Prescription_Medicine;
 use App\Radiologyimaging;
+use App\Radiologymeasure;
+use App\RadiologyService;
 use App\Theatre;
 use App\Triage;
 use App\Ward;
@@ -293,11 +295,12 @@ class PatientController extends Controller
         }
         $dialysis = Dialysis::where('patient_id', '=', $patient->id)->get()->last();
         $medicines = Medicine::where('qty', '>', 0)->get();
-        $imaging_radiology = Radiologyimaging::where('patient_id', '=', $patient->id)->where('appointment_id', '=', $appointment->id)->get()->last();
+        $imaging_radiology = Radiologyimaging::where('patient_id', '=', $patient->id)->where('appointment_id', '=', $appointment->id)->get();
         $theatre = Theatre::where('patient_id', '=', $patient->id)->get()->last();
         $dentists = User::where('user_type','=', 'doctor_dentist')->get();
         $physios = User::where('user_type','=', 'doctor_physiotherapy')->get();
         $lab_measures = LabMeasure::all();
+        $radiology_measures = RadiologyService::all();
         return view('patient.check_patient_view', [
             'title' => "Check Patient",
             'lab_measures' => $lab_measures,
@@ -324,7 +327,8 @@ class PatientController extends Controller
             'data' => $data,
             'select_doctors' => $select_doctors,
             'dentists' => $dentists,
-            'physios' => $physios
+            'physios' => $physios,
+            'radiology_measures' => $radiology_measures
         ]);
     }
 

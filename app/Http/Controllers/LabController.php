@@ -215,7 +215,6 @@ class LabController extends Controller
                 $history->lab_measure_results = null;
             }
         }
-        
 
         foreach ($measures as $key => $measure) {
             if ($measure->measure_id) {

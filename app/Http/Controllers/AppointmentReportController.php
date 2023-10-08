@@ -45,7 +45,6 @@ class AppointmentReportController extends Controller
         }
         $imaging_radiology = Radiologyimaging::where('patient_id', '=', $patient->id)->where('appointment_id', '=', $appointment->id)->get()->last();
         $lab_measures = LabMeasure::all();
-        ///dd($imaging_radiology);
         $title = 'Appointment report';
         return view('patient.appointment_report', compact(
             'appointment', 'patient', 'triage', 'labs', 'lab_measures','imaging_radiology','title','lab_note','lab_requests_final'

@@ -69,8 +69,6 @@ class UsersTableSeeder extends Seeder
                 'user_type' => 'lab'
             ],
 
-
-
             [
                 'email' => 'cashier@wkmh.com',
                 'name' => "Pamela James",

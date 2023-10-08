@@ -123,7 +123,7 @@ use App\Triage;
                     $labs = \App\LabMeasureResult::where('appointment_id', '=', $appointID)->get();
                     if ($labs->isNotEmpty()) {
                         foreach ($labs as $key => $lab) {
-                            $measure_name = LabMeasure::where('id','=',$lab->measure_id)->first()->measure_name;
+                            $measure_name = \App\LabMeasure::where('id','=',$lab->measure_id)->first()->measure_name;
                             $lab->measure_name = $measure_name;
                         }
                     }

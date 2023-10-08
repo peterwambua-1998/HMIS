@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Appointment;
 use App\Billing;
+use App\LabPatientMeasure;
 use App\Measureradiology;
 use App\PatentAppointmentService;
 use App\Patients;
 use App\Radiologyimaging;
+use App\Radiologymeasure;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,16 +28,6 @@ class RadiologyimagingController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -44,67 +36,19 @@ class RadiologyimagingController extends Controller
     public function store(Request $request)
     {
         DB::transaction(function() use($request){
-            $radiology = new Radiologyimaging();
-            $service = new PatentAppointmentService();
-
-
-            if ($request->ct_Scan !== null) {
-                $radiology->ct_scan = $request->ct_Scan;
-                $service->service = 'ct_scan';
+            for ($i=0; $i < count($request->measure_id); $i++) { 
+                $radiology = new Radiologyimaging();
+                $radiology->appointment_id = $request->appointment_id;
+                $radiology->patient_id = $request->patient_id;
+                $radiology->measure_id = $request->measure_id[$i];
+                $radiology->result = $request->measures_results[$i];
+                $radiology->technique = $request->technique[$i];
+                $radiology->findings = $request->findings[$i];
+                $radiology->reasion_for_exam = $request->reason_for_exam[$i];
+                $radiology->save();
             }
-
-            if ($request->x_ray !== null) {
-                $radiology->x_ray = $request->x_ray;
-                $radiology->reasion_for_exam = $request->reason_for_exam;
-                $radiology->technique = $request->technique;
-                $radiology->findings = $request->findings;
-                $service->service = 'x_ray';
-            }
-
-            if ($request->ultra_sound !== null) {
-                $radiology->ultra_sound = $request->ultra_sound;
-                $service->service = 'ultra_sound';
-            }
-
-            if ($request->mri !== null) {
-                $radiology->mri = $request->mri;
-                $service->service = 'mri';
-            }
-
-            /*
-            if ($request->mri !== null) {
-                $radiology->mri = $request->mri;
-            }
-            */
-
-
-
-            $radiology->appointment_id = $request->appointment_id;
-            $radiology->patient_id = $request->patient_id;
-
-            $filePath = '';
-
-            if ($request->hasFile('image_radiology')) {
-                $filePath = $request->file('image_radiology')->store('imaging-radiology', 'public');
-            }
-
-            $radiology->save();
-
-            /*
-            $billing = new Billing();
-            $billing->patient_id = $request->patient_id;
-            $billing->appointment_id = $request->appointment_id;
-            $billing->billing_for = $request->billing_for;
-            $billing->amount = $request->amount;
-            $billing->completed = $request->completed;
-            $billing->payment_method = $request->payment_method;
-            $billing->save();
-            */
-            
 
             $appointment = Appointment::find($request->appointment_id);
-            
-
             if ($appointment->admit == 'YES') {
                 $appointment->department = 'ward';
             } else {
@@ -122,48 +66,9 @@ class RadiologyimagingController extends Controller
                 }
             }
             $appointment->update();
-
-            $service->patient_id = $request->patient_id;
-            $service->appointment_id = $request->appointment_id;
-            $service->department = 'radiology and imaging';
-            $service->save();
         });
 
-        return redirect()->route('searchRadiology');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Radiologyimaging  $radiologyimaging
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Radiologyimaging $radiologyimaging)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Radiologyimaging  $radiologyimaging
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Radiologyimaging $radiologyimaging)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Radiologyimaging  $radiologyimaging
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Radiologyimaging $radiologyimaging)
-    {
-        //
+        return redirect()->route('searchRadiology')->with('success', 'Record stored successfully');
     }
 
     /**
@@ -205,7 +110,7 @@ class RadiologyimagingController extends Controller
 
             $appointment = Appointment::where('patient_id', '=', $result[0]->id)->get()->last();
 
-            $measure = Measureradiology::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result[0]->id)->get()->last();
+            $measures = Radiologymeasure::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result->id)->get();
 
             $docname = User::where('id', '=', $appointment->doctor_id)->first();
             
@@ -219,8 +124,15 @@ class RadiologyimagingController extends Controller
         $result = Patients::find($request->patient_id);
         $radiology = Radiologyimaging::where('patient_id', '=', $result->id)->get();
         $appointment = Appointment::where('patient_id', '=', $result->id)->get()->last();
-        $measure = Measureradiology::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result->id)->get()->last();
+        $measures = Radiologymeasure::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result->id)->get();
+        $note = '';
+        foreach ($measures as $key => $item) {
+            if (!$item->measure_id && $item->note) {
+                $note = $item->note;
+                $measures->forget($key);
+            }
+        }
         $docname = User::where('id', '=', $appointment->doctor_id)->first();
-        return view('radiologyimaging.radiologyview', ["title" => "Search Results", "search_result" => $result, 'radiology' => $radiology, 'appointment' => $appointment, 'measure' => $measure, 'docs'=>$docname]);
+        return view('radiologyimaging.radiologyview', ["title" => "Search Results", "search_result" => $result, 'radiology' => $radiology, 'appointment' => $appointment, 'measures' => $measures, 'docs'=>$docname, 'note' => $note]);
     }
 }

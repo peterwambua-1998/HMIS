@@ -443,8 +443,16 @@ $outlet = '';
                     @endif
 
                     @if (Auth::user()->user_type == "doctor_radiology_imaging"  || Auth::user()->user_type=="admin")
-                    <li class="{{Active::checkRoute('searchRadiology')}}"><a href="{{route('searchRadiology')}}">
-                        <i class="fa fa-image"></i><span>Radiology and Imaging</span></a></li>
+                    <li class="{{Active::checkRoute('searchRadiology')}}">
+                        <a href="{{route('searchRadiology')}}">
+                            <i class="fa fa-image"></i><span>Radiology and Imaging</span>
+                        </a>
+                    </li>
+                    <li class="{{Active::checkRoute('radiology-services')}}">
+                        <a href="{{route('radiology-services.index')}}">
+                            <i class="fa fa-image"></i><span>Radiology Services</span>
+                        </a>
+                    </li>
                     @endif
                    
                     @if(Auth::user()->user_type=='pharmacist' || Auth::user()->user_type=='admin')

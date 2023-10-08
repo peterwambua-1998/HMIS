@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLabMeasuresTable extends Migration
+class CreateSurgeriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,8 @@ class CreateLabMeasuresTable extends Migration
      */
     public function up()
     {
-        Schema::create('lab_measures', function (Blueprint $table) {
+        Schema::create('surgeries', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('measure_name');
-            $table->string('warning_below')->nullable();
-            $table->string('warning_after')->nullable();
-            $table->string('unit_of_measurement')->nullable();
-            $table->string('price')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +26,6 @@ class CreateLabMeasuresTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lab_measures');
+        Schema::dropIfExists('surgeries');
     }
 }

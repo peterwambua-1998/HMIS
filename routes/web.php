@@ -13,6 +13,7 @@
 
 //use Illuminate\Routing\Route;
 
+use App\Http\Controllers\RadiologyServiceController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Route;
@@ -185,6 +186,9 @@ Route::get('/searchradiology', ['as' => 'searchRadiology', 'uses' => 'Radiologyi
 Route::post('/searchradiologypost', ['as' => 'searchradiologypost', 'uses' => 'RadiologyimagingController@search']);
 Route::post('/addradiology', ['as' => 'addRadiology', 'uses' => 'RadiologyimagingController@store']);
 Route::post('/commence-radiology', ['as' => 'commenceradiology', 'uses' => 'RadiologyimagingController@startRadiology']);
+Route::resource('radiology-services', 'RadiologyServiceController')->only('index','store','update','destroy');
+Route::post('/radiology-patient-measures', ['as' => 'patientRadiologyMeasures', 'uses' => 'MeasureController@storeRadiology']);
+
 //physiotherapy
 Route::get('/searchphysiotherapy', ['as' => 'searchphysiotherapy', 'uses' => 'PhysiotherapyController@index']);
 Route::get('/searchphysiotherapypost', ['as' => 'searchphysiotherapypost', 'uses' => 'PhysiotherapyController@search']);

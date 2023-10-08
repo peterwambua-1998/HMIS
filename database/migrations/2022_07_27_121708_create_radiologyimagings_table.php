@@ -17,19 +17,13 @@ class CreateRadiologyimagingsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('appointment_id');
-            $table->string('ct_scan')->nullable();
-            $table->string('x_ray')->nullable();
-            $table->string('ultra_sound')->nullable();
-            $table->string('mri')->nullable();
-            $table->string('pet_scan')->nullable();
+            $table->unsignedBigInteger('measure_id');
+            $table->string('result');
             $table->string('img_url')->nullable();
             $table->string('reasion_for_exam')->nullable();
             $table->string('technique')->nullable();
             $table->string('findings')->nullable();
             $table->timestamps();
-
-            $table->foreign('patient_id')->references('id')->on('patients');
-            $table->foreign('appointment_id')->references('id')->on('appointments');
         });
     }
 

@@ -2812,7 +2812,8 @@ a:hover, a:active, a:focus {
 }
 
 .table>thead>tr>th {
-    border-bottom: 2px solid #f4f4f4
+    border-bottom: 2px solid #f4f4f4;
+    padding: 15px !important;
 }
 
 .table tr td .progress {
@@ -2820,15 +2821,16 @@ a:hover, a:active, a:focus {
 }
 
 .table-bordered {
-    border: 1px solid #f4f4f4
+    border: 1px solid rgb(148 163 184);
 }
 
 .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
-    border: 1px solid #f4f4f4
+    border: 1px solid rgb(226 232 240);
 }
 
 .table-bordered>thead>tr>th, .table-bordered>thead>tr>td {
-    border-bottom-width: 2px
+    border-bottom-width: 1.4px;
+    border-bottom-color: rgb(203 213 225);
 }
 
 .table.no-border, .table.no-border td, .table.no-border th {

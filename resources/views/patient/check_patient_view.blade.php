@@ -117,51 +117,28 @@
 
                 
 
-                @if ($imaging_radiology !== null)
+                @if ($imaging_radiology->count() > 0)
                 <div style="border: 1px solid gray; padding: 10px">
 
                     <h3 style="font-size: 18px; margin-bottom: 2%">
                         Radiology/Imaging Results
                     </h3>
 
-                    @if ($imaging_radiology->ct_scan !== null)
+                    @foreach ($imaging_radiology as $item)
                     <h4 style="font-size: 14px;">
-                        <span style="font-weight: bold">CT Scan:</span> {{ $imaging_radiology->ct_scan }}
+                        <span style="font-weight: bold">
+                            {{App\RadiologyService::where('id',$item->measure_id)->first()->name}}:
+                        </span> 
+                        {{ $item->result }}
                     </h4>
-                    @endif
+                    <h4 style="font-size: 14px;">
+                        <span style="font-weight: bold">
+                            Findings:
+                        </span> 
+                        {{ $item->findings }}
+                    </h4>
+                    @endforeach
 
-
-                    @if ($imaging_radiology->x_ray !== null)
-                    <h4 style="font-size: 14px;">
-                        <span style="font-weight: bold">Findings:</span> {{ $imaging_radiology->findings }}
-                       
-                        
-                    </h4>
-                    <h4 style="font-size: 14px;">
-                        <span style="font-weight: bold">Technique:</span> {{ $imaging_radiology->technique }}
-                    </h4>
-                    <h4 style="font-size: 14px;">
-                        <span style="font-weight: bold">X-Ray Summary:</span> {{ $imaging_radiology->x_ray }}
-                    </h4>
-                    @endif
-
-                    @if ($imaging_radiology->ultra_sound !== null)
-                    <h4 style="font-size: 14px;">
-                        <span style="font-weight: bold">Ultra Sound:</span> {{ $imaging_radiology->ultra_sound }}
-                    </h4>
-                    @endif
-
-                    @if ($imaging_radiology->mri !== null)
-                    <h4 style="font-size: 14px;">
-                        <span style="font-weight: bold">MRI:</span> {{ $imaging_radiology->mri }}
-                    </h4>
-                    @endif
-
-                    @if ($imaging_radiology->pet_scan !== null)
-                    <h4 style="font-size: 14px;">
-                        <span style="font-weight: bold">PET Scan:</span> {{ $imaging_radiology->pet_scan }}
-                    </h4>
-                    @endif
                     <br>
                     
                 </div>
@@ -685,62 +662,36 @@
 
 <div class="modal fade" id="radiology" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-    <form action="{{route('radiologymeasures')}}" method="POST">
+    <form action="{{route('patientRadiologyMeasures')}}" method="POST">
         @csrf
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Radiology And Imaging Request Form</h5>
+          <h5 class="modal-title" id="exampleModalLabel" style="font-weight: bold; font-size: 14px;">Radiology And Imaging Request Form</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="CT Scan" id="defaultCheck1" name="ct_scan">
-                <label class="form-check-label" for="defaultCheck1">
-                    CT Scan
-                </label>
-            </div>
+            <table class="table table-bordered" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th style="width: 10%">Checkbox</th>
+                        <th>Service Name</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($radiology_measures as $item)
+                    <tr>
+                        <td><input class="form-check-input" type="checkbox" value="{{$item->id}}" id="defaultCheck1" name="measures[]"></td>
+                        <td>{{$item->name}}</td>
+                        <td>{{$item->view}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
             <br>
-
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="X-Ray" id="defaultCheck1" name="x_ray">
-                <label class="form-check-label" for="defaultCheck1">
-                    X-Ray
-                </label>
-            </div>
-
-            <br>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="Ultra Sound" id="defaultCheck1" name="ultra_sound">
-                <label class="form-check-label" for="defaultCheck1">
-                    Ultra Sound
-                </label>
-            </div>
-
-            <br>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="mri" id="defaultCheck1" name="mri">
-                <label class="form-check-label" for="defaultCheck1">
-                    MRI
-                </label>
-            </div>
-
-            <br>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="PET Scan" id="defaultCheck1" name="pet_scan">
-                <label class="form-check-label" for="defaultCheck1">
-                    PET Scan
-                </label>
-            </div>
-            
-            <br>
-
+           
             <label for="">Doctor Note</label>
                     <textarea class="form-control" name="doc_note" rows="3" cols="100"
                         placeholder="Add Note"></textarea>
