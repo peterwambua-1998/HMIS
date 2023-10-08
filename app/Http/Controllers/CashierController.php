@@ -11,6 +11,9 @@ use App\HospitalMeasure;
 use App\Invoice;
 use App\PatentAppointmentService;
 use App\Patients;
+use App\SurgaryService;
+use App\Surgery;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -110,7 +113,32 @@ class CashierController extends Controller
     {
         $result = Patients::find($request->patient_id);
         $appointment =  Appointment::where('patient_id', $result->id)->get()->last();
-        return view('cashier.pos', ["title" => "Search Results", "search_result" => $result,  'appointment' => $appointment]);
+        $surgery = Surgery::where('appointment_id', '=', $appointment->id)->get();
+        $surgeryCollection = [];
+        if ($appointment->department == 'surgery') {
+            foreach ($surgery as $key => $item) {
+                if (!$item->measure_id && $item->note) {
+                    $surgery->forget($key);
+                }
+                if ($item->measure_id !== null) {
+                    if ($item->paid == 0) {
+                        $surgeryService = SurgaryService::where('id','=', $item->measure_id)->first();
+                        if ($surgeryService) {
+                            $toPay = $surgeryService->price;
+                            $surgeryCollection['to_pay'] = $toPay;
+                            $surgeryCollection['purpose'] = 'surgery';
+                            $surgeryCollection['amount'] = 1;
+                        }
+                    } 
+                }
+            }
+        }
+        return view('cashier.pos', [
+            "title" => "Search Results", 
+            "search_result" => $result,  
+            'appointment' => $appointment,
+            'surgeryCollection' => $surgeryCollection
+        ]);
     }
 
 

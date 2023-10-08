@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Appointment;
+use App\Medicine;
 use App\Patients;
+use App\Prescription;
+use App\Prescription_Medicine;
 use App\SurgaryResult;
 use App\Surgery;
 use App\User;
@@ -49,8 +52,28 @@ class SurgeryController extends Controller
                 $radiology->result = $request->measures_results[$i];
                 $radiology->save();
             }
-
             $appointment = Appointment::find($request->appointment_id);
+            $user = User::where('id', '=', $appointment->doctor_id)->first();
+            if ($request->send_to == 'pharmacy') {
+                $presc = new Prescription();
+                $presc->doctor_id = $user->id;
+                $presc->patient_id = $request->patient_id;
+                $presc->diagnosis = $request->diagnosis;
+                $presc->appointment_id = $request->appointment_id;
+                $presc->medicines = json_encode($request->medicines);
+                $presc->save();
+                foreach ($request->medicines as $medicine) {
+                    $med = Medicine::where('name_english', 'LIKE', '%'.$medicine['name'] . '%')->first();
+                    $pres_med = new Prescription_Medicine();
+                    $pres_med->medicine_id = $med->id;
+                    $pres_med->prescription_id = $presc->id;
+                    $pres_med->note = $medicine['note'];
+                    $pres_med->exp_date = $med->exp_date;
+                    $pres_med->save();
+                }
+            }
+            
+
             if ($appointment->admit == 'YES') {
                 $appointment->department = 'ward';
             } else {
@@ -58,6 +81,13 @@ class SurgeryController extends Controller
                 if ($request->send_to == 'consultation') {
                     if ($doc->user_type == 'doctor_consultation') {
                         $appointment->department = 'consultation';
+                    }
+                }
+
+                if ($request->send_to == 'pharmacy') {
+                    if ($doc->user_type == 'pharmacy') {
+                        $appointment->department = 'pharmacy';
+                        $appointment->completed = 'YES';
                     }
                 }
 
@@ -76,7 +106,7 @@ class SurgeryController extends Controller
             $appointment->update();
         });
 
-        return redirect()->route('surgerySearchPatient')->with('success','Record added successfully');
+        return response(1, 200);
     }
 
     /**
@@ -142,6 +172,7 @@ class SurgeryController extends Controller
             }
         }
         $docname = User::where('id', '=', $appointment->doctor_id)->first();
-        return view('surgery.view', ["title" => "Search Results", "search_result" => $result, 'history' => $history, 'appointment' => $appointment, 'measures' => $measures, 'docs'=>$docname, 'note' => $note]);
+        $medicines = Medicine::where('qty', '>', 0)->get();
+        return view('surgery.view', ["title" => "Search Results", "search_result" => $result, 'history' => $history, 'appointment' => $appointment, 'measures' => $measures, 'docs'=>$docname, 'note' => $note,'medicines' => $medicines]);
     }
 }

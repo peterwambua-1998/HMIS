@@ -209,7 +209,7 @@
                                     <td>{{$app->number}}</td>
                                     <td>{{$app->name}}</td>
                                     <td>{{$app->patient_id}} <button  onclick="myCopy( {{ $app->patient_id }}) ">copy</button></td>
-                                    <td>{{ $app->department }}</td>
+                                    <td>{{$app->department}}</td>
                                     <td>Dr. {{ App\User::where('id', '=', $app->doctor_id)->first()->name }}</td>
                                     <td>{{ $app->mode_of_payment }}</td>
                                 </tr>

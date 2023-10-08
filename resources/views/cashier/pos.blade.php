@@ -192,12 +192,18 @@
 							
 							<th>Qty</th>
 							<th>Sub.Total</th>
-							<th>Action</th>
+							{{-- <th>Action</th> --}}
 						</tr>
 					</thead>
 					<tbody id="tableData" style="text-align: center">
-                        
-                        
+                        @if (count($surgeryCollection) > 0)
+                            <tr>
+                                <td>{{$surgeryCollection['purpose']}}</td>
+                                <td>{{$surgeryCollection['to_pay']}}</td>
+                                <td>{{$surgeryCollection['amount']}}</td>
+                                <td>{{$surgeryCollection['to_pay']}}</td>
+                            </tr>
+                        @endif
                      
 					</tbody>
 				</table>

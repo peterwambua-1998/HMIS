@@ -21,6 +21,7 @@ use App\Radiologyimaging;
 use App\Radiologymeasure;
 use App\RadiologyService;
 use App\SurgaryService;
+use App\Surgery;
 use App\Theatre;
 use App\Triage;
 use App\Ward;
@@ -425,13 +426,24 @@ class PatientController extends Controller
 
         $user = Auth::user();
         $docs = User::where('user_type', 'LIKE', '%'.'doctor' .'%')->get();
-        $appointments = DB::table('appointments')->join('patients', 'appointments.patient_id', '=', 'patients.id')->select('patients.name', 'appointments.number', 'appointments.patient_id', 'appointments.completed', 'appointments.department', 'appointments.mode_of_payment', 'appointments.doctor_id', 'appointments.admit')->whereRaw(DB::Raw('Date(appointments.created_at)=CURDATE()'))->get();
-        
-
-        if ($user->user_type == 'admin') {
-            $appointments = DB::table('appointments')->join('patients', 'appointments.patient_id', '=', 'patients.id')->select('patients.name', 'appointments.number', 'appointments.patient_id', 'appointments.completed', 'appointments.department', 'appointments.mode_of_payment', 'appointments.doctor_id', 'appointments.admit')->whereRaw(DB::Raw('Date(appointments.created_at)=CURDATE()'))->get();
-           
+        $appointments = DB::table('appointments')->join('patients', 'appointments.patient_id', '=', 'patients.id')->select('patients.name', 'appointments.number', 'appointments.patient_id', 'appointments.completed', 'appointments.department', 'appointments.mode_of_payment', 'appointments.doctor_id', 'appointments.admit', 'appointments.id')->whereRaw(DB::Raw('Date(appointments.created_at)=CURDATE()'))->get();
+        foreach ($appointments as $key => $app) {
+            if ($app->department == "surgery") {
+                $surgery = Surgery::where('appointment_id', '=', $app->id)->get();
+                foreach ($surgery as $key => $sg) {
+                    if ($sg->measure_id !== null) {
+                        if ($sg->paid == 0) {
+                            $app->department = 'surgery (not paid)';
+                        } else {
+                            $app->department = 'surgery (paid)';
+                        }
+                    }
+                    
+                }
+            }
         }
+
+        
 
         if ($user->user_type == 'doctor_consultation') {
             $appointments = $appointments->where('department', '=', 'consultation')->where('doctor_id', '=', $user->id);
