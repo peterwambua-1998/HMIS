@@ -48,7 +48,6 @@ class LabController extends Controller
     public function store(Request $request)
     {
         DB::transaction(function() use($request){
-            $obj = new stdClass;
             $service = new PatentAppointmentService();
 
             for ($i=0; $i < count($request->measure_id); $i++) { 

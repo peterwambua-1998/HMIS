@@ -9,8 +9,14 @@ use App\Cashier;
 use App\Department;
 use App\HospitalMeasure;
 use App\Invoice;
+use App\LabMeasure;
+use App\LabPatientMeasure;
+use App\Medicine;
 use App\PatentAppointmentService;
 use App\Patients;
+use App\Prescription;
+use App\Radiologymeasure;
+use App\RadiologyService;
 use App\SurgaryService;
 use App\Surgery;
 use Illuminate\Database\Eloquent\Collection;
@@ -113,6 +119,7 @@ class CashierController extends Controller
     {
         $result = Patients::find($request->patient_id);
         $appointment =  Appointment::where('patient_id', $result->id)->get()->last();
+        //surgery
         $surgery = Surgery::where('appointment_id', '=', $appointment->id)->get();
         $surgeryCollection = [];
         if ($appointment->department == 'surgery') {
@@ -133,11 +140,62 @@ class CashierController extends Controller
                 }
             }
         }
+
+        //lab
+        $lab_collection = [];
+
+        if ($appointment->department == 'lab') {
+            $lab_measures = LabPatientMeasure::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result->id)->get();
+            $labInnerArray = [];
+            foreach ($lab_measures as $key => $measure) {
+                $labService = LabMeasure::where('id', $measure->measure_id)->first();
+                $toPay = $labService->price;
+                $labInnerArray['to_pay'] = $toPay;
+                $labInnerArray['purpose'] = $labService->measure_name;
+                $lab_collection['amount'] = 1;
+                array_push($lab_collection, $labInnerArray);
+            }
+        }
+
+        // radiology
+        $radiology_collection = [];
+
+        if ($appointment->department == 'radiology') {
+            $radiology_measures = Radiologymeasure::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result->id)->get();
+            $radiologyInnerArray = [];
+            foreach ($radiology_measures as $key => $measure) {
+                $radiologyService = RadiologyService::where('id', $measure->measure_id)->first();
+                $toPay = $radiologyService->price;
+                $radiologyInnerArray['to_pay'] = $toPay;
+                $radiologyInnerArray['purpose'] = $radiologyService->name;
+                $radiologyInnerArray['amount'] = 1;
+                array_push($radiology_collection, $radiologyInnerArray);
+            }
+        }
+
+        //medicine
+        $prescription_collection = [];
+
+        if ($appointment->department == "pharmacy") {
+            $prescription = Prescription::where('appointment_id', '=', $appointment->id)->where('patient_id', $result->id)->get()->last();
+            $medicines = $prescription->medicines;
+            $prescriptionInnerArray = [];
+            foreach ($medicines as $key => $med) {
+                $medicine = Medicine::where('id', $med->id)->first();
+                $prescriptionInnerArray['to_pay'] = $medicine->price;
+                $prescriptionInnerArray['purpose'] = $medicine->name_english;
+                $prescriptionInnerArray['amount'] = $med->qty;
+                array_push($prescription_collection, $prescriptionInnerArray);
+            }
+        }
+
         return view('cashier.pos', [
             "title" => "Search Results", 
             "search_result" => $result,  
             'appointment' => $appointment,
-            'surgeryCollection' => $surgeryCollection
+            'surgeryCollection' => $surgeryCollection,
+            'lab_collection' => $lab_collection,
+            'radiology_collection' => $radiology_collection
         ]);
     }
 
