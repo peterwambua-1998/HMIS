@@ -37,6 +37,11 @@
                             <input id="unit" type="text" class="form-control" name="unit" value="{{ $lab_measure->unit_of_measurement }}" required>
                         </div>
 
+                        <div class="form-group">
+                            <label for="name">{{__('Price')}} <span class="text-red">*</span></label>
+                            <input id="price" type="text" class="form-control" name="price" value="{{ old('price') }}" required>
+                        </div>
+
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary">{{__('Update Measure')}}</button>
                         </div>

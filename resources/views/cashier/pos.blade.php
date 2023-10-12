@@ -38,7 +38,7 @@
                 #container{
                     display: grid;
                     grid-template-columns: auto 38%;
-                    grid-template-rows: 20% auto 10%;
+                    grid-template-rows: 20% 70% 10%;
                     grid-template-areas: 
                     "header header"
                     "content sidebar"
@@ -71,18 +71,18 @@
                     grid-area: content;
                     display: grid;
                     grid-template-rows: auto 15%;
-                    
+                    height: 45vh !important;
                 }
                 #price_column{
                     border:2px solid black;
                     background-color: white;
+                    height: 40vh !important;
                 }
                 #table_buttons{
                     display: grid;
                     grid-template-columns: 60% auto ;
                     grid-gap:30px;
                     margin-left: 8px;
-                    margin-top: -40px;
                 }
                 #buttons{
                     height:50px;
@@ -198,13 +198,39 @@
 					<tbody id="tableData" style="text-align: center">
                         @if (count($surgeryCollection) > 0)
                             <tr>
-                                <td>{{$surgeryCollection['purpose']}}</td>
-                                <td>{{$surgeryCollection['to_pay']}}</td>
-                                <td>{{$surgeryCollection['amount']}}</td>
-                                <td>{{$surgeryCollection['to_pay']}}</td>
+                                <td>
+                                    {{$surgeryCollection['purpose']}}
+                                    <input type="hidden" name="service[]" value="{{$surgeryCollection['purpose']}}">
+                                </td>
+                                <td>{{$surgeryCollection['to_pay']}}
+                                    
+                                </td>
+                                <td>{{$surgeryCollection['amount']}}
+                                    <input type="hidden" name="qty[]" value="{{$surgeryCollection['amount']}}">
+                                </td>
+                                <td class="totalPrice">{{$surgeryCollection['to_pay']}}
+                                    <input type="hidden" name="amount[]" value="{{$surgeryCollection['to_pay']}}">
+                                </td>
                             </tr>
                         @endif
-                     
+
+                        @if (count($lab_collection) > 0)
+                            @foreach ($lab_collection as $item)
+                            <tr>
+                                <td>
+                                    {{$item['purpose']}}
+                                    <input type="hidden" name="service[]" value="{{$item['purpose']}}">
+                                </td>
+                                <td>{{$item['to_pay']}}</td>
+                                <td>{{$item['amount']}}
+                                    <input type="hidden" name="qty[]" value="{{$item['amount']}}">
+                                </td>
+                                <td class="totalPrice">{{$item['to_pay']}}
+                                    <input type="hidden" name="amount[]" value="{{$item['to_pay']}}">
+                                </td>
+                            </tr>
+                            @endforeach
+                        @endif
 					</tbody>
 				</table>
 				
@@ -214,7 +240,7 @@
 				
 				<div class="">
                     <label for="" style="color: white; font-size: 23px;">Enter Paid Amout: </label>
-                    <input type="number" name="paid_amount" class="form-control" style="height: 60px; font-size: 23px" id="paidamounts">
+                    <input type="number" name="paid_amount" class="form-control" style="height: 60px; font-size: 23px" id="paidamounts" required>
 				</div>
 
                 <div class="">
@@ -415,6 +441,7 @@
             var TotalValue = 0;
             var TotalPriceArr = $('#tableData tr .totalPrice').get();
 
+
             $(TotalPriceArr).each(function(){
                 TotalValue += parseFloat($(this).text());
             });
@@ -426,11 +453,14 @@
 
         }
 
+        GrandTotal();
+        
+
         $("body").on('click','#delete-row', function(){
             
-                    $(this).parents("tr").remove();
-                    
-                    GrandTotal();
+                $(this).parents("tr").remove();
+                
+                GrandTotal();
         });
         
         function searchProducts() {

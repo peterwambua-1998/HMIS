@@ -256,6 +256,7 @@ class LabController extends Controller
         $lab_measure = new LabMeasure();
         $lab_measure->measure_name = $request->measure;
         $lab_measure->unit_of_measurement = $request->unit;
+        $lab_measure->price = $request->price;
         if ($lab_measure->save()) {
             return redirect()->route('labMeasure')->with('success','Record stored successfully');
         }
@@ -274,6 +275,7 @@ class LabController extends Controller
         $lab_measure = LabMeasure::find($request->lab_measure_id);
         $lab_measure->measure_name = $request->measure;
         $lab_measure->unit_of_measurement = $request->unit;
+        $lab_measure->price = $request->price;
         if ($lab_measure->update()) {
             return redirect()->route('labMeasure')->with('success','Record stored successfully');
         }

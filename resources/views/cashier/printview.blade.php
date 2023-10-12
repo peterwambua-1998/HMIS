@@ -137,7 +137,7 @@
                        </div>
                        <div class="col-xs-4 col-sm-4 col-md-4">
                            <div class="receipt-left">
-                               <h3>INVOICE # 102</h3>
+                               <h3 style="margin-left: -20px;">INVOICE # {{$invoice->serial_number}}</h3>
                            </div>
                        </div>
                    </div>

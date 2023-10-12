@@ -132,6 +132,7 @@ class CashierController extends Controller
                         $surgeryService = SurgaryService::where('id','=', $item->measure_id)->first();
                         if ($surgeryService) {
                             $toPay = $surgeryService->price;
+                            $surgeryCollection['service_id'] = $surgeryService->id;
                             $surgeryCollection['to_pay'] = $toPay;
                             $surgeryCollection['purpose'] = 'surgery';
                             $surgeryCollection['amount'] = 1;
@@ -148,14 +149,20 @@ class CashierController extends Controller
             $lab_measures = LabPatientMeasure::where('appointment_id', '=', $appointment->id)->where('patient_id','=',$result->id)->get();
             $labInnerArray = [];
             foreach ($lab_measures as $key => $measure) {
-                $labService = LabMeasure::where('id', $measure->measure_id)->first();
-                $toPay = $labService->price;
-                $labInnerArray['to_pay'] = $toPay;
-                $labInnerArray['purpose'] = $labService->measure_name;
-                $lab_collection['amount'] = 1;
-                array_push($lab_collection, $labInnerArray);
+                if (isset($measure->measure_id)) {
+                    $labService = LabMeasure::where('id', $measure->measure_id)->first();
+                    $toPay = $labService->price;
+                    $labInnerArray['service_id'] = $labService->id;
+                    $labInnerArray['to_pay'] = $toPay;
+                    $labInnerArray['purpose'] = $labService->measure_name;
+                    $labInnerArray['amount'] = 1;
+                    array_push($lab_collection, $labInnerArray);
+                }
+               
             }
         }
+
+        
 
         // radiology
         $radiology_collection = [];
@@ -166,6 +173,7 @@ class CashierController extends Controller
             foreach ($radiology_measures as $key => $measure) {
                 $radiologyService = RadiologyService::where('id', $measure->measure_id)->first();
                 $toPay = $radiologyService->price;
+                $radiologyInnerArray['service_id'] = $radiologyService->id;
                 $radiologyInnerArray['to_pay'] = $toPay;
                 $radiologyInnerArray['purpose'] = $radiologyService->name;
                 $radiologyInnerArray['amount'] = 1;
@@ -182,6 +190,7 @@ class CashierController extends Controller
             $prescriptionInnerArray = [];
             foreach ($medicines as $key => $med) {
                 $medicine = Medicine::where('id', $med->id)->first();
+                $prescriptionInnerArray['service_id'] = $medicine->id;
                 $prescriptionInnerArray['to_pay'] = $medicine->price;
                 $prescriptionInnerArray['purpose'] = $medicine->name_english;
                 $prescriptionInnerArray['amount'] = $med->qty;
@@ -202,53 +211,41 @@ class CashierController extends Controller
 
     public function print(Request $request)
     {
-
-        
-        //$bill_final = new BillFinal();
-        //return $request;
-
         $result = Patients::withTrashed()->where('id', '=', $request->keyword)->get();
 
         if ($result == null) {
             return redirect()->back();
         }
-            //$triage = Lab::where('patient_id', '=', $result[0]->id)->get();
+        
         $appointment = Appointment::where('patient_id', '=', $result[0]->id)->get()->last();
         $invoice = new Invoice();
+        if ($appointment->department == 'lab') {
+            DB::transaction(function () use ($request, $invoice) {
+                $invoice->patient_id = $request->keyword;
+                $invoice->appointment_id = $request->appointment;
+                $invoice->serial_number = 'INV' . date('Ymd') . rand(1, 100000);
+                $invoice->sub_total = $request->total;
+                $invoice->tax = 0;
+                $invoice->total = $request->total;
+                $invoice->paid_amount = $request->paid_amount;
+                $invoice->balance = $request->balance;
+                $invoice->payment_method = $request->payment_method;
+                $invoice->save();
 
-        DB::transaction(function () use ($request, $invoice) {
-   
-            
-            $invoice->patient_id = $request->keyword;
-            $invoice->appointment_id = $request->appointment;
-            $invoice->serial_number = 'INV' . date('Ymd') . rand(1, 100000);
-    
-            $invoice->sub_total = $request->total;
-            $invoice->tax = 0;
-            $invoice->total = $request->total;
-            $invoice->paid_amount = $request->paid_amount;
-            $invoice->balance = $request->balance;
-            $invoice->payment_method = $request->payment_method;
-            $invoice->save();
+                for ($i=0; $i < count($request->service); $i++) { 
+                    $billfinal = new Billing();
+                    $billfinal->invoice_id = $invoice->id;
+                    $billfinal->billing_for = $request->service[$i];
+                    $billfinal->qty = $request->qty[$i];
+                    $billfinal->amount = $request->amount[$i];
+                    $billfinal->save();
+                }
+            });
 
-            
-            for ($i=0; $i < count($request->service); $i++) { 
-                # code...
-            
-                $billfinal = new Billing();
-                $billfinal->invoice_id = $invoice->id;
-                $billfinal->billing_for = $request->service[$i];
-                $billfinal->qty = $request->qty[$i];
-                $billfinal->amount = $request->amount[$i];
-                //$billfinal->payment_method = $request->payment_method;
-                $billfinal->save();
-            }
+        }
         
-        });
-
         $billing = Billing::where('invoice_id', '=', $invoice->id)->get();
-       
-        return view('cashier.printview', ["title" => "Search Results", "search_result" => $result, 'billing' => $billing, 'appointment' => $appointment]);
+        return view('cashier.printview', ["title" => "Search Results", "search_result" => $result, 'billing' => $billing, 'appointment' => $appointment, 'invoice' => $invoice]);
         //return view('cashier.printview', ["title" => "Search Results", "search_result" => $result, 'billing' => $billing, 'appointment' => $appointment]);
     }
 

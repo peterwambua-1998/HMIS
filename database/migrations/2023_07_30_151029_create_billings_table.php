@@ -19,9 +19,7 @@ class CreateBillingsTable extends Migration
             $table->string('billing_for');
             $table->integer('qty')->nullable();
             $table->integer('amount');
-            
-            
-        
+            $table->integer('price');
             //insurance/ mobile /cash
             $table->timestamps();
 
