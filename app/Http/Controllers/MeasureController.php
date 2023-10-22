@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Appointment;
+use App\CashierQueue;
 use App\LabPatientMeasure;
 use App\Measure;
 use App\Radiologymeasure;
@@ -65,6 +66,14 @@ class MeasureController extends Controller
             $appointment = Appointment::find($request->app_id);
             $appointment->department = $request->sendto;
             $appointment->update();
+
+            //add to cashier queue;
+            $cashierQueue = new CashierQueue();
+            $cashierQueue->appointment_id = $request->app_id;
+            $cashierQueue->patient_id = $request->patient_id;
+            $cashierQueue->department = 'lab';
+            $cashierQueue->reason = 'lab';
+            $cashierQueue->save();
         });
 
         return redirect()->route('create_channel_view')->with('success', 'Patient sent to lab');

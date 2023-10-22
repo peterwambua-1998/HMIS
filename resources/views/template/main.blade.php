@@ -393,12 +393,14 @@ $outlet = '';
                     @endif
                     
                     {{--create channel--}}
+                    @if ($user_type =='Admin')
                     <li class="{{Active::checkRoute('create_channel_view')}}">
                         <a href="{{route('create_channel_view')}}">
                             <i class="fas fa-folder-plus"></i>
                             <span>Queue</span>
                         </a>
                     </li>
+                    @endif
 
                     
 
@@ -412,10 +414,14 @@ $outlet = '';
                     
                     @endif
                     @if($user_type =='admin' || $user_type=='Lab')
+                        <li class="{{Active::checkRoute('labqueue')}}">
+                            <a href="{{route('labqueue')}}">
+                                <i class="fas fa-folder-plus"></i>
+                                <span>Queue</span>
+                            </a>
+                        </li>
                         <li class="{{Active::checkRoute('searchLab')}}"><a href="{{route('searchLab')}}"><i class="fa fa-flask" aria-hidden="true"></i><span> Lab</span></a></li>
-                    @endif
-
-                    @if($user_type =='admin' || $user_type=='Lab')
+                       
                         <li class="{{Active::checkRoute('labMeasure')}}"><a href="{{route('labMeasure')}}"><i class="fa-solid fa-list"></i><span class="ml-2"> Lab Tests List</span></a></li>
                     @endif
                     
@@ -509,6 +515,13 @@ $outlet = '';
                     @endif
 
                     @if (Auth::user()->user_type == "cashier" || Auth::user()->user_type=="admin")
+                    <li class="{{Active::checkRoute('cashier-queue')}}">
+                        <a href="{{route('cashierqueue')}}">
+                            <i class="fas fa-folder-plus"></i>
+                            <span>Queue</span>
+                        </a>
+                    </li>
+
                     <li class="{{Active::checkRoute('cashiercheckp')}}">
                         <a href="{{route('cashiercheckp')}}">
                             <i class="fa fa-credit-card" aria-hidden="true"></i>

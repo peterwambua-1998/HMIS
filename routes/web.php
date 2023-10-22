@@ -165,7 +165,7 @@ Route::get('/lab-measures', ['as' => 'labMeasure', 'uses' => 'LabController@meas
 Route::post('/save-measure', ['as' => 'saveMeasure', 'uses' => 'LabController@saveMeasure']);
 Route::get('/edit-measure/{id}', ['as' => 'measure_edit', 'uses' => 'LabController@editMeasure']);
 Route::post('/update-measure', ['as' => 'measure_update', 'uses' => 'LabController@updateMeasure']);
-
+Route::get('/lab-queue',['as' => 'labqueue', 'uses' => 'LabController@queueView']);
 
 //Dialysis
 Route::get('/searchdialysis', ['as' => 'searchDialysis', 'uses' => 'DialysisController@index']);
@@ -221,6 +221,7 @@ Route::get('/inpatientlist', ['as' => 'inpatientlist', 'uses' => 'CashierControl
 Route::get('/allservices', ['as' => 'allservices', 'uses' => 'CashierController@getService']);
 Route::get('/searchservice', ['as' => 'searchservice', 'uses' => 'CashierController@searchService']);
 Route::get('/services/{id}',['as' => 'services', 'uses' => 'CashierController@getServices']);
+Route::get('/cashier-queue',['as' => 'cashierqueue', 'uses' => 'CashierController@queueView']);
 //Route::post('/addtheatre', ['as' => 'addtheatre', 'uses' => 'TheatreController@store']);
 
 //lab measrures

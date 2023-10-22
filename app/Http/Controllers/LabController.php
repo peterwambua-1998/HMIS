@@ -9,6 +9,7 @@ use App\Lab;
 use App\LabMeasure;
 use App\LabMeasureResult;
 use App\LabPatientMeasure;
+use App\LabQueue;
 use App\Measure;
 use App\PatentAppointmentService;
 use App\Patients;
@@ -80,14 +81,19 @@ class LabController extends Controller
                 }
             }
             $appointment->update();
-
             
             $service->patient_id = $request->patient_id;
             $service->appointment_id = $request->appointment_id;
             $service->department = 'lab';
-           
             $service->save();
 
+            /**
+             * update list
+             */
+            $labQueue = LabQueue::where('appointment_id', $request->appointment)->first();
+            $labQueue->done = 1;
+            $labQueue->paid = 1;
+            $labQueue->update();
         });
         
 
@@ -280,5 +286,16 @@ class LabController extends Controller
             return redirect()->route('labMeasure')->with('success','Record stored successfully');
         }
         return redirect()->route('labMeasure')->with('unsuccess','System error please try again');
+    }
+
+    /**
+     * Queue view
+     */
+    public function queueView()
+    {
+        $number = 1;
+        $title = 'lab queue';
+        $qs = LabQueue::where('done', 0)->get();
+        return view('lab.queue', compact('title', 'qs', 'number'));
     }
 }
